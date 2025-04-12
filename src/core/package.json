@@ -43,18 +43,18 @@
     "url": "https://twitter.com/n_moore"
   },
   "license": "MIT",
-  "packageManager": "pnpm@8.6.12",
+  "packageManager": "pnpm@8.15.9",
   "scripts": {
     "build": "unbuild",
     "prepack": "pnpm build",
     "test": "vitest run"
   },
   "dependencies": {
-    "picocolors": "^1.0.0",
+    "picocolors": "^1.1.1",
     "sisteransi": "^1.0.5"
   },
   "devDependencies": {
-    "vitest": "^1.6.0",
+    "vitest": "^1.6.1",
     "wrap-ansi": "^8.1.0"
   }
 }
