@@ -23,6 +23,7 @@ This Starter Kit comes pre-configured with the following:
 - 🎨 [ESLint](https://eslint.org/) - for code linting _(and formatting)_
 - 📦️ [pkg.pr.new](https://pkg.pr.new) - Continuous (Preview) Releases for your libraries
 - 🐙 [GitHub Actions](https://github.com/features/actions) - runs your CI _(fixes code style issues, tags releases & creates its changelogs, runs the test suite, etc.)_
+- 🚀 [Stacks.js Onboarding](https://stacks.js.org) - Interactive CLI for setting up Stacks.js projects
 
 ## Get Started
 
@@ -30,7 +31,7 @@ It's rather simple to get your package development started:
 
 ```bash
 # you may use this GitHub template or the following command:
-bunx degit stacksjs/ts-starter my-pkg
+bunx degit stacksjs/ts-prompts my-pkg
 cd my-pkg
 
 bun i # install all deps
@@ -41,6 +42,30 @@ bun run release # automates git commits, versioning, and changelog generations
 ```
 
 _Check out the package.json scripts for more commands._
+
+## Stacks.js Setup
+
+To create a new Stacks.js project using the interactive onboarding process:
+
+```bash
+# Using npx
+npx ts-prompts create-stacks
+
+# Or after installing globally
+npm install -g ts-prompts
+stacks-init
+```
+
+The CLI will guide you through the setup process, allowing you to configure:
+
+- Project name and description
+- Database type (PostgreSQL, MySQL, SQLite, MongoDB)
+- Features to include (Authentication, APIs, Admin Dashboard, etc.)
+- TypeORM integration
+- Git initialization
+- Dependency installation
+
+After completing the wizard, you'll have a fully configured Stacks.js project ready for development.
 
 ## Testing
 
@@ -60,7 +85,7 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 For help, discussion about best practices, or any other conversation that would benefit from being searchable:
 
-[Discussions on GitHub](https://github.com/stacksjs/ts-starter/discussions)
+[Discussions on GitHub](https://github.com/stacksjs/ts-prompts/discussions)
 
 For casual chit-chat with others using this package:
 
@@ -68,7 +93,7 @@ For casual chit-chat with others using this package:
 
 ## Postcardware
 
-“Software that is free, but hopes for a postcard.” We love receiving postcards from around the world showing where Stacks is being used! We showcase them on our website too.
+"Software that is free, but hopes for a postcard." We love receiving postcards from around the world showing where Stacks is being used! We showcase them on our website too.
 
 Our address: Stacks.js, 12665 Village Ln #2306, Playa Vista, CA 90094, United States 🌎
 
@@ -88,8 +113,8 @@ Made with 💙
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/ts-prompts?style=flat-square
 [npm-version-href]: https://npmjs.com/package/ts-prompts
-[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/ts-starter/ci.yml?style=flat-square&branch=main
-[github-actions-href]: https://github.com/stacksjs/ts-starter/actions?query=workflow%3Aci
+[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/ts-prompts/ci.yml?style=flat-square&branch=main
+[github-actions-href]: https://github.com/stacksjs/ts-prompts/actions?query=workflow%3Aci
 
-<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/ts-starter/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/stacksjs/ts-starter -->
+<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/ts-prompts/main?style=flat-square
+[codecov-href]: https://codecov.io/gh/stacksjs/ts-prompts -->

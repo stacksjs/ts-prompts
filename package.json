@@ -5,15 +5,15 @@
   "description": "A toolkit for building CLI prompts in TypeScript.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
-  "homepage": "https://github.com/stacksjs/ts-starter#readme",
+  "homepage": "https://github.com/stacksjs/ts-prompts#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stacksjs/ts-starter.git"
+    "url": "git+https://github.com/stacksjs/ts-prompts.git"
   },
   "bugs": {
-    "url": "https://github.com/stacksjs/ts-starter/issues"
+    "url": "https://github.com/stacksjs/ts-prompts/issues"
   },
-  "keywords": ["cli", "prompts", "toolkit", "typescript"],
+  "keywords": ["cli", "prompts", "toolkit", "typescript", "stacks"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -25,6 +25,9 @@
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "stacks-init": "./dist/bin/stacks-init.js"
+  },
   "files": ["README.md", "dist"],
   "scripts": {
     "build": "bun --bun build.ts",
@@ -38,7 +41,8 @@
     "dev:docs": "bun --bun vitepress dev docs",
     "build:docs": "bun --bun vitepress build docs",
     "preview:docs": "bun --bun vitepress preview docs",
-    "typecheck": "bun --bun tsc --noEmit"
+    "typecheck": "bun --bun tsc --noEmit",
+    "create-stacks": "./dist/bin/stacks-init.js"
   },
   "devDependencies": {
     "@stacksjs/docs": "^0.70.23",

@@ -1,6 +1,6 @@
 # Install
 
-_This is just an example of the ts-starter docs._
+_This is just an example of the ts-prompts docs._
 
 Installing `rpx` is easy. Simply pull it in via your package manager of choice, or download the binary directly.
 

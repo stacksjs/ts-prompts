@@ -1,4 +1,5 @@
 export * from './core'
 export * from './prompts'
+export * from './stacks-onboarding'
 export * from './types'
 export * from './utils'
