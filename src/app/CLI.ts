@@ -171,11 +171,11 @@ export class CLI extends EventEmitter {
    * Parse argv
    */
   parse(
-    argv = processArgs,
+    argv: string[] = processArgs,
     {
       /** Whether to run the action for matched command */
       run = true,
-    } = {},
+    }: { run?: boolean } = {},
   ): ParsedArgv {
     this.rawArgs = argv
     if (!this.name) {

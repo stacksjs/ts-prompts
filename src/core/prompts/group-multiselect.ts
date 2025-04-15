@@ -47,7 +47,7 @@ export default class GroupMultiSelectPrompt<T extends { value: any }> extends Pr
   }
 
   constructor(opts: GroupMultiSelectOptions<T>) {
-    super(opts, false)
+    super(opts as unknown as PromptOptions<Prompt>, false)
     const { options } = opts
     this.#selectableGroups = opts.selectableGroups !== false
     this.options = Object.entries(options).flatMap(([key, option]) => [

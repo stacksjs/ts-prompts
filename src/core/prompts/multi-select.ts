@@ -28,7 +28,7 @@ export default class MultiSelectPrompt<T extends { value: any }> extends Prompt 
   }
 
   constructor(opts: MultiSelectOptions<T>) {
-    super(opts, false)
+    super(opts as unknown as PromptOptions<Prompt>, false)
 
     this.options = opts.options
     this.value = [...(opts.initialValues ?? [])]

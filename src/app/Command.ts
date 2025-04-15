@@ -46,7 +46,7 @@ export class Command {
   constructor(
     public rawName: string,
     public description: string,
-    public config: CommandConfig = {},
+    public config: CommandConfig,
     public cli: CAC,
   ) {
     this.options = []
@@ -54,6 +54,11 @@ export class Command {
     this.name = removeBrackets(rawName)
     this.args = findAllBrackets(rawName)
     this.examples = []
+
+    // Set default value for config if it's undefined
+    if (!config) {
+      this.config = {}
+    }
   }
 
   usage(text: string): this {

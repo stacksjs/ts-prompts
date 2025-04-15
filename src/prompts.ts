@@ -1,5 +1,5 @@
-import type { State } from '@clack/core'
 import type { Readable, Writable } from 'node:stream'
+import type { State } from './core'
 import process from 'node:process'
 import { WriteStream } from 'node:tty'
 import { stripVTControlCharacters as strip } from 'node:util'

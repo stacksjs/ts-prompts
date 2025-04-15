@@ -15,7 +15,7 @@ import {
   spinner,
   tasks,
   text,
-} from './prompts'
+} from '../src/prompts'
 
 interface OnboardingAnswers {
   projectName: string

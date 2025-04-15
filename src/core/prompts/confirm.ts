@@ -17,7 +17,7 @@ export default class ConfirmPrompt extends Prompt {
   }
 
   constructor(opts: ConfirmOptions) {
-    super(opts, false)
+    super(opts as unknown as PromptOptions<Prompt>, false)
     this.value = !!opts.initialValue
 
     this.on('value', () => {

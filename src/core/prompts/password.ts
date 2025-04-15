@@ -18,7 +18,7 @@ export default class PasswordPrompt extends Prompt {
   }
 
   constructor({ mask, ...opts }: PasswordOptions) {
-    super(opts)
+    super(opts as unknown as PromptOptions<Prompt>)
     this._mask = mask ?? '•'
 
     this.on('finalize', () => {

@@ -9,7 +9,7 @@ export default class SelectKeyPrompt<T extends { value: any }> extends Prompt {
   cursor = 0
 
   constructor(opts: SelectKeyOptions<T>) {
-    super(opts, false)
+    super(opts as unknown as PromptOptions<Prompt>, false)
 
     this.options = opts.options
     const keys = this.options.map(({ value: [initial] }) => initial?.toLowerCase())
