@@ -3,7 +3,7 @@ import type { OptionConfig } from './Option'
 import { platformInfo } from './node'
 import Option from './Option'
 import {
-  CACError,
+  ClappError,
   findAllBrackets,
   findLongest,
   padRight,
@@ -255,7 +255,7 @@ export class Command {
     const minimalArgsCount = this.args.filter(arg => arg.required).length
 
     if (this.cli.args.length < minimalArgsCount) {
-      throw new CACError(
+      throw new ClappError(
         `missing required args for command \`${this.rawName}\``,
       )
     }
@@ -276,7 +276,7 @@ export class Command {
           && !this.hasOption(name)
           && !globalCommand.hasOption(name)
         ) {
-          throw new CACError(
+          throw new ClappError(
             `Unknown option \`${name.length > 1 ? `--${name}` : `-${name}`}\``,
           )
         }
@@ -298,7 +298,7 @@ export class Command {
           o => o.negated && o.names.includes(option.name),
         )
         if (value === true || (value === false && !hasNegated)) {
-          throw new CACError(`option \`${option.rawName}\` value is missing`)
+          throw new ClappError(`option \`${option.rawName}\` value is missing`)
         }
       }
     }

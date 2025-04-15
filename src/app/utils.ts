@@ -158,7 +158,7 @@ export function camelcaseOptionName(name: string): string {
     .join('.')
 }
 
-export class CACError extends Error {
+export class ClappError extends Error {
   constructor(message: string) {
     super(message)
     this.name = this.constructor.name
