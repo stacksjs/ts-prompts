@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
 import color from 'picocolors'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import TextPrompt from '../../src/core/prompts/text'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
@@ -26,7 +26,7 @@ describe('textPrompt', () => {
     })
     // leave the promise hanging since we don't want to submit in this test
     instance.prompt()
-    expect(output.buffer).to.deep.equal([cursor.hide, 'foo'])
+    expect(output.buffer).toEqual([cursor.hide, 'foo'])
   })
 
   it('sets default value on finalize if no value', async () => {
@@ -39,7 +39,7 @@ describe('textPrompt', () => {
     const resultPromise = instance.prompt()
     input.emit('keypress', '', { name: 'return' })
     const result = await resultPromise
-    expect(result).to.equal('bleep bloop')
+    expect(result).toEqual('bleep bloop')
   })
 
   it('keeps value on finalize', async () => {
@@ -53,7 +53,7 @@ describe('textPrompt', () => {
     input.emit('keypress', 'x', { name: 'x' })
     input.emit('keypress', '', { name: 'return' })
     const result = await resultPromise
-    expect(result).to.equal('x')
+    expect(result).toEqual('x')
   })
 
   describe('cursor', () => {
@@ -64,7 +64,7 @@ describe('textPrompt', () => {
         render: () => 'foo',
       })
 
-      expect(instance.cursor).to.equal(0)
+      expect(instance.cursor).toEqual(0)
     })
   })
 
@@ -78,7 +78,7 @@ describe('textPrompt', () => {
       instance.prompt()
       input.emit('keypress', 'x', { name: 'x' })
       input.emit('keypress', '', { name: 'return' })
-      expect(instance.valueWithCursor).to.equal('x')
+      expect(instance.valueWithCursor).toEqual('x')
     })
 
     it('highlights cursor position', () => {
@@ -93,7 +93,7 @@ describe('textPrompt', () => {
         input.emit('keypress', keys[i], { name: keys[i] })
       }
       input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.valueWithCursor).to.equal(`fo${color.inverse('o')}`)
+      expect(instance.valueWithCursor).toEqual(`fo${color.inverse('o')}`)
     })
 
     it('shows cursor at end if beyond value', () => {
@@ -108,7 +108,7 @@ describe('textPrompt', () => {
         input.emit('keypress', keys[i], { name: keys[i] })
       }
       input.emit('keypress', 'right', { name: 'right' })
-      expect(instance.valueWithCursor).to.equal('foo█')
+      expect(instance.valueWithCursor).toEqual('foo█')
     })
   })
 })

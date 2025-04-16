@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import color from 'picocolors'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import PasswordPrompt from '../../src/core/prompts/password'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
@@ -26,7 +26,7 @@ describe('passwordPrompt', () => {
     })
     // leave the promise hanging since we don't want to submit in this test
     instance.prompt()
-    expect(output.buffer).to.deep.equal([cursor.hide, 'foo'])
+    expect(output.buffer).toEqual([cursor.hide, 'foo'])
   })
 
   describe('cursor', () => {
@@ -37,7 +37,7 @@ describe('passwordPrompt', () => {
         render: () => 'foo',
       })
 
-      expect(instance.cursor).to.equal(0)
+      expect(instance.cursor).toEqual(0)
     })
   })
 
@@ -54,7 +54,7 @@ describe('passwordPrompt', () => {
         input.emit('keypress', keys[i], { name: keys[i] })
       }
       input.emit('keypress', '', { name: 'return' })
-      expect(instance.valueWithCursor).to.equal('•••')
+      expect(instance.valueWithCursor).toEqual('•••')
     })
 
     it('renders marker at end', () => {
@@ -65,7 +65,7 @@ describe('passwordPrompt', () => {
       })
       instance.prompt()
       input.emit('keypress', 'x', { name: 'x' })
-      expect(instance.valueWithCursor).to.equal(`•${color.inverse(color.hidden('_'))}`)
+      expect(instance.valueWithCursor).toEqual(`•${color.inverse(color.hidden('_'))}`)
     })
 
     it('renders cursor inside value', () => {
@@ -80,7 +80,7 @@ describe('passwordPrompt', () => {
       input.emit('keypress', 'z', { name: 'z' })
       input.emit('keypress', 'left', { name: 'left' })
       input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.valueWithCursor).to.equal(`•${color.inverse('•')}•`)
+      expect(instance.valueWithCursor).toEqual(`•${color.inverse('•')}•`)
     })
 
     it('renders custom mask', () => {
@@ -92,7 +92,7 @@ describe('passwordPrompt', () => {
       })
       instance.prompt()
       input.emit('keypress', 'x', { name: 'x' })
-      expect(instance.valueWithCursor).to.equal(`X${color.inverse(color.hidden('_'))}`)
+      expect(instance.valueWithCursor).toEqual(`X${color.inverse(color.hidden('_'))}`)
     })
   })
 })

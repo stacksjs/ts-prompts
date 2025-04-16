@@ -1,6 +1,6 @@
 import type { Key } from 'node:readline'
+import { afterEach, describe, expect, it } from 'bun:test'
 import { Buffer } from 'node:buffer'
-import { afterEach, describe, expect, it, vi } from 'vitest'
 import { block } from '../src/core/utils/index'
 import { cursor } from '../src/utils'
 import { MockReadable } from './mock-readable'
@@ -23,7 +23,7 @@ describe('utils', () => {
       const eventData = Buffer.from('bloop')
       input.emit('keypress', eventData, event)
       callback()
-      expect(output.buffer).to.deep.equal([cursor.hide, cursor.move(-1, 0), cursor.show])
+      expect(output.buffer).toEqual([cursor.hide, cursor.move(-1, 0), cursor.show])
     })
 
     it('clears output vertically when return pressed', () => {
@@ -37,7 +37,7 @@ describe('utils', () => {
       const eventData = Buffer.from('bloop')
       input.emit('keypress', eventData, event)
       callback()
-      expect(output.buffer).to.deep.equal([cursor.hide, cursor.move(0, -1), cursor.show])
+      expect(output.buffer).toEqual([cursor.hide, cursor.move(0, -1), cursor.show])
     })
 
     it('ignores additional keypresses after dispose', () => {
@@ -52,7 +52,7 @@ describe('utils', () => {
       input.emit('keypress', eventData, event)
       callback()
       input.emit('keypress', eventData, event)
-      expect(output.buffer).to.deep.equal([cursor.hide, cursor.move(-1, 0), cursor.show])
+      expect(output.buffer).toEqual([cursor.hide, cursor.move(-1, 0), cursor.show])
     })
 
     it('exits on ctrl-c', () => {
@@ -71,7 +71,7 @@ describe('utils', () => {
       const eventData = Buffer.from('\x03')
       input.emit('keypress', eventData, event)
       expect(spy).toHaveBeenCalled()
-      expect(output.buffer).to.deep.equal([cursor.hide, cursor.show])
+      expect(output.buffer).toEqual([cursor.hide, cursor.show])
     })
 
     it('does not clear if overwrite=false', () => {
@@ -85,7 +85,7 @@ describe('utils', () => {
       const eventData = Buffer.from('bloop')
       input.emit('keypress', eventData, event)
       callback()
-      expect(output.buffer).to.deep.equal([cursor.hide, cursor.show])
+      expect(output.buffer).toEqual([cursor.hide, cursor.show])
     })
   })
 })

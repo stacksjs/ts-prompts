@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import ConfirmPrompt from '../../src/core/prompts/confirm'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
@@ -26,7 +26,7 @@ describe('confirmPrompt', () => {
       inactive: 'no',
     })
     instance.prompt()
-    expect(output.buffer).to.deep.equal([cursor.hide, 'foo'])
+    expect(output.buffer).toEqual([cursor.hide, 'foo'])
   })
 
   it('sets value and submits on confirm (y)', () => {
@@ -42,8 +42,8 @@ describe('confirmPrompt', () => {
     instance.prompt()
     input.emit('keypress', 'y', { name: 'y' })
 
-    expect(instance.value).to.equal(true)
-    expect(instance.state).to.equal('submit')
+    expect(instance.value).toEqual(true)
+    expect(instance.state).toEqual('submit')
   })
 
   it('sets value and submits on confirm (n)', () => {
@@ -59,8 +59,8 @@ describe('confirmPrompt', () => {
     instance.prompt()
     input.emit('keypress', 'n', { name: 'n' })
 
-    expect(instance.value).to.equal(false)
-    expect(instance.state).to.equal('submit')
+    expect(instance.value).toEqual(false)
+    expect(instance.state).toEqual('submit')
   })
 
   describe('cursor', () => {
@@ -76,7 +76,7 @@ describe('confirmPrompt', () => {
 
       instance.prompt()
       input.emit('keypress', '', { name: 'return' })
-      expect(instance.cursor).to.equal(1)
+      expect(instance.cursor).toEqual(1)
     })
 
     it('cursor is 0 when active', () => {
@@ -91,7 +91,7 @@ describe('confirmPrompt', () => {
 
       instance.prompt()
       input.emit('keypress', '', { name: 'return' })
-      expect(instance.cursor).to.equal(0)
+      expect(instance.cursor).toEqual(0)
     })
   })
 })

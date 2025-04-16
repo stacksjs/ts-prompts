@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
 import Prompt from '../../src/core/prompts/prompt'
 import { isCancel } from '../../src/core/utils/index'
 import { cursor } from '../../src/utils'
@@ -26,7 +26,7 @@ describe('prompt', () => {
     })
     // leave the promise hanging since we don't want to submit in this test
     instance.prompt()
-    expect(output.buffer).to.deep.equal([cursor.hide, 'foo'])
+    expect(output.buffer).toEqual([cursor.hide, 'foo'])
   })
 
   it('submits on return key', async () => {
@@ -38,10 +38,10 @@ describe('prompt', () => {
     const resultPromise = instance.prompt()
     input.emit('keypress', '', { name: 'return' })
     const result = await resultPromise
-    expect(result).to.equal('')
-    expect(isCancel(result)).to.equal(false)
-    expect(instance.state).to.equal('submit')
-    expect(output.buffer).to.deep.equal([cursor.hide, 'foo', '\n', cursor.show])
+    expect(result).toEqual('')
+    expect(isCancel(result)).toEqual(false)
+    expect(instance.state).toEqual('submit')
+    expect(output.buffer).toEqual([cursor.hide, 'foo', '\n', cursor.show])
   })
 
   it('cancels on ctrl-c', async () => {
@@ -53,9 +53,9 @@ describe('prompt', () => {
     const resultPromise = instance.prompt()
     input.emit('keypress', '\x03', { name: 'c' })
     const result = await resultPromise
-    expect(isCancel(result)).to.equal(true)
-    expect(instance.state).to.equal('cancel')
-    expect(output.buffer).to.deep.equal([cursor.hide, 'foo', '\n', cursor.show])
+    expect(isCancel(result)).toEqual(true)
+    expect(instance.state).toEqual('cancel')
+    expect(output.buffer).toEqual([cursor.hide, 'foo', '\n', cursor.show])
   })
 
   it('writes initialValue to value', () => {
@@ -68,7 +68,7 @@ describe('prompt', () => {
     })
     instance.on('value', eventSpy)
     instance.prompt()
-    expect(instance.value).to.equal('bananas')
+    expect(instance.value).toEqual('bananas')
     expect(eventSpy).toHaveBeenCalled()
   })
 
@@ -95,7 +95,7 @@ describe('prompt', () => {
       render: () => 'foo',
     })
 
-    expect(instance.state).to.equal('initial')
+    expect(instance.state).toEqual('initial')
 
     instance.prompt()
 
@@ -148,7 +148,7 @@ describe('prompt', () => {
 
     input.emit('keypress', '\t', { name: 'tab' })
 
-    expect(instance.value).to.equal('piwa')
+    expect(instance.value).toEqual('piwa')
   })
 
   it('does not set placeholder value on tab if value already set', () => {
@@ -164,7 +164,7 @@ describe('prompt', () => {
 
     input.emit('keypress', '\t', { name: 'tab' })
 
-    expect(instance.value).to.equal('trzy')
+    expect(instance.value).toEqual('trzy')
   })
 
   it('emits key event for unknown chars', () => {
@@ -242,11 +242,11 @@ describe('prompt', () => {
 
     instance.prompt()
 
-    expect(instance.state).to.equal('active')
+    expect(instance.state).toEqual('active')
 
     abortController.abort()
 
-    expect(instance.state).to.equal('cancel')
+    expect(instance.state).toEqual('cancel')
   })
 
   it('returns immediately if signal is already aborted', () => {
@@ -261,6 +261,6 @@ describe('prompt', () => {
     })
     instance.prompt()
 
-    expect(instance.state).to.equal('cancel')
+    expect(instance.state).toEqual('cancel')
   })
 })

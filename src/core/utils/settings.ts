@@ -1,8 +1,7 @@
 const actions = ['up', 'down', 'left', 'right', 'space', 'enter', 'cancel'] as const
 export type Action = (typeof actions)[number]
 
-/** Global settings for Clack programs, stored in memory */
-interface InternalClackSettings {
+interface InternalSettings {
   actions: Set<Action>
   aliases: Map<string, Action>
   messages: {
@@ -11,7 +10,7 @@ interface InternalClackSettings {
   }
 }
 
-export const settings: InternalClackSettings = {
+export const settings: InternalSettings = {
   actions: new Set(actions),
   aliases: new Map<string, Action>([
     // vim support
@@ -29,7 +28,7 @@ export const settings: InternalClackSettings = {
   },
 }
 
-export interface ClackSettings {
+export interface Settings {
   /**
    * Set custom global aliases for the default actions.
    * This will not overwrite existing aliases, it will only add new ones!
@@ -56,7 +55,7 @@ export interface ClackSettings {
   }
 }
 
-export function updateSettings(updates: ClackSettings): void {
+export function updateSettings(updates: Settings): void {
   // Handle each property in the updates
   if (updates.aliases !== undefined) {
     const aliases = updates.aliases

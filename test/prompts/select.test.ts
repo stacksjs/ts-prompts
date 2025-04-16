@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
 import SelectPrompt from '../../src/core/prompts/select'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
@@ -25,7 +25,7 @@ describe('selectPrompt', () => {
       options: [{ value: 'foo' }, { value: 'bar' }],
     })
     instance.prompt()
-    expect(output.buffer).to.deep.equal([cursor.hide, 'foo'])
+    expect(output.buffer).toEqual([cursor.hide, 'foo'])
   })
 
   describe('cursor', () => {
@@ -39,9 +39,9 @@ describe('selectPrompt', () => {
 
       instance.prompt()
 
-      expect(instance.cursor).to.equal(0)
+      expect(instance.cursor).toEqual(0)
       input.emit('keypress', 'down', { name: 'down' })
-      expect(instance.cursor).to.equal(1)
+      expect(instance.cursor).toEqual(1)
     })
 
     it('cursor loops around', () => {
@@ -54,11 +54,11 @@ describe('selectPrompt', () => {
 
       instance.prompt()
 
-      expect(instance.cursor).to.equal(0)
+      expect(instance.cursor).toEqual(0)
       input.emit('keypress', 'up', { name: 'up' })
-      expect(instance.cursor).to.equal(2)
+      expect(instance.cursor).toEqual(2)
       input.emit('keypress', 'down', { name: 'down' })
-      expect(instance.cursor).to.equal(0)
+      expect(instance.cursor).toEqual(0)
     })
 
     it('left behaves as up', () => {
@@ -72,7 +72,7 @@ describe('selectPrompt', () => {
       instance.prompt()
 
       input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.cursor).to.equal(2)
+      expect(instance.cursor).toEqual(2)
     })
 
     it('right behaves as down', () => {
@@ -86,7 +86,7 @@ describe('selectPrompt', () => {
       instance.prompt()
 
       input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.cursor).to.equal(1)
+      expect(instance.cursor).toEqual(1)
     })
 
     it('initial value is selected', () => {
@@ -98,7 +98,7 @@ describe('selectPrompt', () => {
         initialValue: 'bar',
       })
       instance.prompt()
-      expect(instance.cursor).to.equal(1)
+      expect(instance.cursor).toEqual(1)
     })
   })
 })

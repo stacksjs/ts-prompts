@@ -38,8 +38,7 @@
     "dev:docs": "bun --bun vitepress dev docs",
     "build:docs": "bun --bun vitepress build docs",
     "preview:docs": "bun --bun vitepress preview docs",
-    "typecheck": "bun --bun tsc --noEmit",
-    "create-stacks": "./dist/bin/stacks-init.js"
+    "typecheck": "bun --bun tsc --noEmit"
   },
   "devDependencies": {
     "@stacksjs/docs": "^0.70.23",

@@ -1,6 +1,7 @@
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'bun:test'
 import { EventEmitter, Readable, Writable } from 'node:stream'
 import colors from 'picocolors'
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
+import { settings } from '../src/core/utils/settings'
 import * as prompts from '../src/prompts'
 
 // TODO (43081j): move this into a util?
@@ -192,11 +193,11 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
         processEmitter = new EventEmitter()
 
         // Spy on process methods
-        vi.spyOn(process, 'on').mockImplementation((ev, listener) => {
+        vi.spyOn(process, 'on').mockImplementation((ev: string, listener: (...args: any[]) => void) => {
           processEmitter.on(ev, listener)
           return process
         })
-        vi.spyOn(process, 'removeListener').mockImplementation((ev, listener) => {
+        vi.spyOn(process, 'removeListener').mockImplementation((ev: string, listener: (...args: any[]) => void) => {
           processEmitter.removeListener(ev, listener)
           return process
         })
@@ -241,9 +242,9 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       it('uses global custom cancel message from settings', () => {
         // Store original message
-        const originalCancelMessage = prompts.settings.messages.cancel
+        const originalCancelMessage = settings.messages.cancel
         // Set custom message
-        prompts.settings.messages.cancel = 'Global cancel message'
+        settings.messages.cancel = 'Global cancel message'
 
         const result = prompts.spinner({ output })
         result.start('Test operation')
@@ -253,14 +254,14 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
         expect(output.buffer).toMatchSnapshot()
 
         // Reset to original
-        prompts.settings.messages.cancel = originalCancelMessage
+        settings.messages.cancel = originalCancelMessage
       })
 
       it('uses global custom error message from settings', () => {
         // Store original message
-        const originalErrorMessage = prompts.settings.messages.error
+        const originalErrorMessage = settings.messages.error
         // Set custom message
-        prompts.settings.messages.error = 'Global error message'
+        settings.messages.error = 'Global error message'
 
         const result = prompts.spinner({ output })
         result.start('Test operation')
@@ -270,17 +271,17 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
         expect(output.buffer).toMatchSnapshot()
 
         // Reset to original
-        prompts.settings.messages.error = originalErrorMessage
+        settings.messages.error = originalErrorMessage
       })
 
       it('prioritizes direct options over global settings', () => {
         // Store original messages
-        const originalCancelMessage = prompts.settings.messages.cancel
-        const originalErrorMessage = prompts.settings.messages.error
+        const originalCancelMessage = settings.messages.cancel
+        const originalErrorMessage = settings.messages.error
 
         // Set custom global messages
-        prompts.settings.messages.cancel = 'Global cancel message'
-        prompts.settings.messages.error = 'Global error message'
+        settings.messages.cancel = 'Global cancel message'
+        settings.messages.error = 'Global error message'
 
         const result = prompts.spinner({
           output,
@@ -306,8 +307,8 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
         expect(output.buffer).toMatchSnapshot()
 
         // Reset to original values
-        prompts.settings.messages.cancel = originalCancelMessage
-        prompts.settings.messages.error = originalErrorMessage
+        settings.messages.cancel = originalCancelMessage
+        settings.messages.error = originalErrorMessage
       })
     })
   })
@@ -1308,7 +1309,9 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
     })
 
     it('values can be non-primitive', async () => {
+      // eslint-disable-next-line symbol-description
       const value0 = Symbol()
+      // eslint-disable-next-line symbol-description
       const value1 = Symbol()
       const result = prompts.groupMultiselect({
         message: 'foo',
