@@ -17,16 +17,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./*": {
-      "import": "./dist/*"
+      "import": "./dist/src/index.js"
     }
   },
-  "module": "./dist/index.js",
+  "module": "./dist/src/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "stacks-init": "./dist/bin/stacks-init.js"
+    "clapp": "./dist/bin/clapp.js"
   },
   "files": ["README.md", "dist"],
   "scripts": {

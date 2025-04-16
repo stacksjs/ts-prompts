@@ -31,6 +31,7 @@ quickfix
 shikijs
 sisteransi
 socio
+softprops
 Solana
 Spatie
 stacksjs
