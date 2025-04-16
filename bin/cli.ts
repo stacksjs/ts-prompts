@@ -1,7 +1,7 @@
 import { version } from '../package.json'
 import { CLI } from '../src'
 
-const cli = new CLI('my-cli')
+const cli = new CLI('clapp')
 
 interface CliOption {
   from: string
