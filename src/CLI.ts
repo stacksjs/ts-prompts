@@ -64,9 +64,14 @@ export class CLI extends EventEmitter {
    * Add a sub-command
    */
   command(rawName: string, description?: string, config?: CommandConfig): Command {
+    if (!config) {
+      config = {}
+    }
+
     const command = new Command(rawName, description || '', config, this)
     command.globalCommand = this.globalCommand
     this.commands.push(command)
+
     return command
   }
 
