@@ -1,7 +1,8 @@
 import type CAC from './CLI'
 import type { OptionConfig } from './Option'
 import Option from './Option'
-import { platformInfo } from './runtimes/node'
+import { platformInfo as bunPlatformInfo } from './runtimes/bun'
+import { platformInfo as nodePlatformInfo } from './runtimes/node'
 import {
   ClappError,
   findAllBrackets,
@@ -246,6 +247,14 @@ export class Command {
     const { name } = this.cli
     const { versionNumber } = this.cli.globalCommand
     if (versionNumber) {
+      // first, check if bun is used
+      let platformInfo
+      if (Bun) {
+        platformInfo = bunPlatformInfo
+      }
+      else {
+        platformInfo = nodePlatformInfo
+      }
       // eslint-disable-next-line no-console
       console.log(`${name}/${versionNumber} ${platformInfo}`)
     }
