@@ -1,6 +1,6 @@
 import type CAC from './CLI'
 import type { OptionConfig } from './Option'
-import { platformInfo } from './node'
+import { platformInfo } from './runtimes/node'
 import Option from './Option'
 import {
   ClappError,

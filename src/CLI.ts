@@ -1,22 +1,10 @@
-import type {
-  CommandConfig,
-  CommandExample,
-  HelpCallback,
-} from './Command'
+import type { CommandConfig, CommandExample, HelpCallback } from './Command'
 import type { OptionConfig } from './Option'
 import { EventEmitter } from 'node:events'
 import mri from 'mri'
-import Command, {
-  GlobalCommand,
-} from './Command'
-import { processArgs } from './node'
-import {
-  camelcaseOptionName,
-  getFileName,
-  getMriOptions,
-  setByType,
-  setDotProp,
-} from './utils'
+import Command, { GlobalCommand } from './Command'
+import { processArgs } from './runtimes/node'
+import { camelcaseOptionName, getFileName, getMriOptions, setByType, setDotProp } from './utils'
 
 interface ParsedArgv {
   args: ReadonlyArray<string>
@@ -345,5 +333,10 @@ export class CLI extends EventEmitter {
     return command.commandAction.apply(this, actionArgs)
   }
 }
+
+/**
+ * @param name The program name to display in help and version message
+ */
+export const cli = (name = ''): CLI => new CLI(name)
 
 export default CLI
