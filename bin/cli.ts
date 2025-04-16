@@ -1,7 +1,7 @@
-import { CAC } from 'cac'
 import { version } from '../package.json'
+import { CLI } from '../src'
 
-const cli = new CAC('my-cli')
+const cli = new CLI('my-cli')
 
 interface CliOption {
   from: string
