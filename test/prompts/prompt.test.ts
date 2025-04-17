@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import Prompt from '../../src/prompts/prompt'
 import { isCancel } from '../../src/runtimes/utils/index'
 import { cursor } from '../../src/utils'

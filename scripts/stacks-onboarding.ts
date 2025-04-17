@@ -1,4 +1,3 @@
-import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import process from 'node:process'
 import color from 'picocolors'
@@ -10,7 +9,6 @@ import {
   multiselect,
   note,
   outro,
-  password,
   select,
   spinner,
   tasks,

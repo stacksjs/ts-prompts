@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import SelectPrompt from '../../src/prompts/select'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
