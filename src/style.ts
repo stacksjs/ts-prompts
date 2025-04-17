@@ -338,6 +338,7 @@ export function table(data: string[][], options?: { border?: boolean, header?: b
 }
 
 // System message logger
+// TODO: replace with clarity
 export const log = {
   info: (message: string): void => {
     console.log(`${style.blue('ℹ')} ${message}`)
