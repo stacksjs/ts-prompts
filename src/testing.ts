@@ -113,7 +113,7 @@ export async function execCommand(
   const { inputs = [], env = {}, cwd = process.cwd(), timeout = 5000 } = options
 
   // Setup test environment
-  const testContext = setupTest(cliInstance)
+  const testContext = setupTest()
   const { stdin, stdout, stderr } = testContext
 
   // Check if this is a help command

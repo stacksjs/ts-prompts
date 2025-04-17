@@ -64,7 +64,7 @@ const sidebar = [
     items: [
       { text: 'CLI Framework', link: '/features/cli-framework' },
       { text: 'Interactive Prompts', link: '/features/prompts' },
-      { text: 'Stacks.js Integration', link: '/features/stacks-integration' },
+      { text: 'Styling', link: '/styling' },
     ],
   },
   {
