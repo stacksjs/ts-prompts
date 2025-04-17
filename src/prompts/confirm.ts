@@ -1,5 +1,5 @@
 import type { PromptOptions } from './prompt'
-import { cursor } from '../../utils'
+import { cursor } from '../utils'
 import Prompt from './prompt'
 
 interface ConfirmOptions extends PromptOptions<ConfirmPrompt> {
