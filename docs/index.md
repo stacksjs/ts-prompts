@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "clapp"
-  text: "Beautiful CLI framework for Bun"
+  text: "Powerful CLI framework"
   tagline: "Create elegant command-line applications with interactive prompts"
   image: /images/logo-white.png
   actions:
