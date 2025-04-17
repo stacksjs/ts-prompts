@@ -45,7 +45,14 @@
     "dev:docs": "bun --bun vitepress dev docs",
     "build:docs": "bun --bun vitepress build docs",
     "preview:docs": "bun --bun vitepress preview docs",
-    "typecheck": "bun --bun tsc --noEmit"
+    "typecheck": "bun --bun tsc --noEmit",
+    "zip": "bun run zip:all",
+    "zip:all": "bun run zip:linux-x64 && bun run zip:linux-arm64 && bun run zip:windows-x64 && bun run zip:darwin-x64 && bun run zip:darwin-arm64",
+    "zip:linux-x64": "zip -j bin/clapp-linux-x64.zip bin/clapp-linux-x64",
+    "zip:linux-arm64": "zip -j bin/clapp-linux-arm64.zip bin/clapp-linux-arm64",
+    "zip:windows-x64": "zip -j bin/clapp-windows-x64.zip bin/clapp-windows-x64.exe",
+    "zip:darwin-x64": "zip -j bin/clapp-darwin-x64.zip bin/clapp-darwin-x64",
+    "zip:darwin-arm64": "zip -j bin/clapp-darwin-arm64.zip bin/clapp-darwin-arm64"
   },
   "devDependencies": {
     "@stacksjs/docs": "^0.70.23",
