@@ -1,118 +1,141 @@
-# Install
+# Installation
 
-_This is just an example of the clapp docs._
+Installing `clapp` is easy. You can add it to your project as a dependency and start building beautiful CLI applications.
 
-Installing `rpx` is easy. Simply pull it in via your package manager of choice, or download the binary directly.
+## Installing as a Dependency
 
-## Package Managers
-
-Choose your package manager of choice:
+Add clapp to your existing project using your preferred package manager:
 
 ::: code-group
 
-```sh [npm]
-npm install --save-dev @stacksjs/rpx
-# npm i -d @stacksjs/rpx
+```bash [bun]
+# Install using Bun (recommended)
+bun add @stacksjs/clapp
 
-# or, install globally via
-npm i -g @stacksjs/rpx
+# Or as a development dependency
+bun add -d @stacksjs/clapp
 ```
 
-```sh [bun]
-bun install --dev @stacksjs/rpx
-# bun add --dev @stacksjs/rpx
-# bun i -d @stacksjs/rpx
+```bash [npm]
+# Install using npm
+npm install @stacksjs/clapp
 
-# or, install globally via
-bun add --global @stacksjs/rpx
+# Or as a development dependency
+npm install --save-dev @stacksjs/clapp
 ```
 
-```sh [pnpm]
-pnpm add --save-dev @stacksjs/rpx
-# pnpm i -d @stacksjs/rpx
+```bash [pnpm]
+# Install using pnpm
+pnpm add @stacksjs/clapp
 
-# or, install globally via
-pnpm add --global @stacksjs/rpx
+# Or as a development dependency
+pnpm add -D @stacksjs/clapp
 ```
 
-```sh [yarn]
-yarn add --dev @stacksjs/rpx
-# yarn i -d @stacksjs/rpx
+```bash [yarn]
+# Install using Yarn
+yarn add @stacksjs/clapp
 
-# or, install globally via
-yarn global add @stacksjs/rpx
-```
-
-```sh [brew]
-brew install rpx # coming soon
-```
-
-```sh [pkgx]
-pkgx rpx # coming soon
+# Or as a development dependency
+yarn add -D @stacksjs/clapp
 ```
 
 :::
 
-Read more about how to use it in the Usage section of the documentation.
+## Global Installation
 
-## Binaries
-
-Choose the binary that matches your platform and architecture:
+You can also install clapp globally to use its CLI features across all your projects:
 
 ::: code-group
 
-```sh [macOS (arm64)]
-# Download the binary
-curl -L https://github.com/stacksjs/rpx/releases/download/v0.9.1/rpx-darwin-arm64 -o rpx
-
-# Make it executable
-chmod +x rpx
-
-# Move it to your PATH
-mv rpx /usr/local/bin/rpx
+```bash [bun]
+# Install globally using Bun
+bun add -g @stacksjs/clapp
 ```
 
-```sh [macOS (x64)]
-# Download the binary
-curl -L https://github.com/stacksjs/rpx/releases/download/v0.9.1/rpx-darwin-x64 -o rpx
-
-# Make it executable
-chmod +x rpx
-
-# Move it to your PATH
-mv rpx /usr/local/bin/rpx
+```bash [npm]
+# Install globally using npm
+npm install -g @stacksjs/clapp
 ```
 
-```sh [Linux (arm64)]
-# Download the binary
-curl -L https://github.com/stacksjs/rpx/releases/download/v0.9.1/rpx-linux-arm64 -o rpx
-
-# Make it executable
-chmod +x rpx
-
-# Move it to your PATH
-mv rpx /usr/local/bin/rpx
+```bash [pnpm]
+# Install globally using pnpm
+pnpm add -g @stacksjs/clapp
 ```
 
-```sh [Linux (x64)]
-# Download the binary
-curl -L https://github.com/stacksjs/rpx/releases/download/v0.9.1/rpx-linux-x64 -o rpx
-
-# Make it executable
-chmod +x rpx
-
-# Move it to your PATH
-mv rpx /usr/local/bin/rpx
+```bash [yarn]
+# Install globally using Yarn
+yarn global add @stacksjs/clapp
 ```
 
-```sh [Windows (x64)]
-# Download the binary
-curl -L https://github.com/stacksjs/rpx/releases/download/v0.9.1/rpx-windows-x64.exe -o rpx.exe
-
-# Move it to your PATH (adjust the path as needed)
-move rpx.exe C:\Windows\System32\rpx.exe
-```
-
-::: tip
-You can also find the `rpx` binaries in GitHub [releases](https://github.com/stacksjs/rpx/releases).
 :::
+
+## Requirements
+
+- [Bun](https://bun.sh/) 1.0.0 or higher
+- Node.js 18.x or higher (if not using Bun)
+
+## Verifying Installation
+
+After installation, you can verify that clapp is working correctly:
+
+```bash
+# If installed globally
+clapp --version
+
+# If installed locally
+bunx clapp --version
+```
+
+This should display the current version of clapp.
+
+## Basic Project Setup
+
+After installing clapp, you can create a new project structure manually:
+
+```bash
+mkdir my-cli-app
+cd my-cli-app
+
+# Initialize a new package
+bun init
+
+# Install clapp
+bun add @stacksjs/clapp
+```
+
+Create your main CLI file (`src/index.ts`):
+
+```ts
+import { cli, command } from '@stacksjs/clapp'
+
+// Create your CLI application
+const app = cli({
+  name: 'my-cli',
+  version: '0.1.0',
+  description: 'My awesome CLI application',
+})
+
+// Add commands
+command('hello')
+  .description('Say hello')
+  .action(() => {
+    console.log('Hello, world!')
+  })
+
+// Run your CLI
+app.run()
+```
+
+Update your `package.json` to include the build and start scripts:
+
+```json
+{
+  "scripts": {
+    "build": "bun build ./src/index.ts --outfile ./dist/cli.js",
+    "start": "bun run ./dist/cli.js"
+  }
+}
+```
+
+This will get you started with a basic clapp project. For more advanced usage, refer to the other sections of the documentation.

@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "clapp"
-  text: "For a better local environment."
-  tagline: "Modern and smart reverse proxy."
+  text: "Beautiful CLI framework for Bun"
+  tagline: "Create elegant command-line applications with interactive prompts"
   image: /images/logo-white.png
   actions:
     - theme: brand
@@ -13,21 +13,27 @@ hero:
       link: /intro
     - theme: alt
       text: View on GitHub
-      link: https://github.com/stacksjs/rpx
+      link: https://github.com/stacksjs/clapp
 
 features:
-  - title: "Minimal Starter Kit"
-    icon: "🔀"
-    details: "Bootstrap your next TypeScript project."
-  - title: "Documentation"
+  - title: "CLI Framework"
+    icon: "🛠️"
+    details: "Build robust command-line applications with an elegant, TypeScript-first API"
+  - title: "Beautiful Prompts"
+    icon: "💎"
+    details: "Create engaging user experiences through interactive CLI prompts"
+  - title: "Bun-Powered"
+    icon: "⚡"
+    details: "Lightning fast execution backed by Bun's runtime"
+  - title: "TypeScript-First"
+    icon: "🧠"
+    details: "Fully typed APIs for improved developer experience"
+  - title: "Easy Documentation"
     icon: "📚"
-    details: "Easily document your idea/package/library."
-  - title: "CLI"
-    icon: "🛠"
-    details: "Build your own CLI."
-  - title: "Binary"
+    details: "Built-in VitePress integration for beautiful documentation"
+  - title: "Production-Ready"
     icon: "🚀"
-    details: "Automatically builds a binary for your project out of your CLI."
+    details: "Automatically builds optimized binaries for your projects"
 ---
 
 <Home />

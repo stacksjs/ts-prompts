@@ -1,5 +1,6 @@
 import { CLI, cli } from './CLI'
 import Command from './Command'
+import * as testingUtils from './testing'
 
 export { CLI, cli, Command }
 
@@ -21,5 +22,6 @@ export { settings, updateSettings } from './runtimes/utils/settings'
 export type { PromptState } from './types'
 
 export * from './utils'
+export { testingUtils }
 
 export default cli

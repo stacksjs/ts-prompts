@@ -8,44 +8,140 @@
 
 # clapp
 
-This is an opinionated TypeScript Starter kit to help kick-start development of your next Bun package.
+An elegant, TypeScript-first CLI framework built on Bun for creating beautiful command-line applications with interactive prompts.
+
+![clapp-demo](.github/art/demo.gif)
 
 ## Features
 
-This Starter Kit comes pre-configured with the following:
+This toolkit comes packed with everything you need to build professional command-line applications:
 
-- 🛠️ [Powerful Build Process](https://github.com/oven-sh/bun) - via Bun
-- 💪🏽 [Fully Typed APIs](https://www.typescriptlang.org/) - via TypeScript
-- 📚 [Documentation-ready](https://vitepress.dev/) - via VitePress
-- ⌘ [CLI & Binary](https://www.npmjs.com/package/bunx) - via Bun & CAC
-- 🧪 [Built With Testing In Mind](https://bun.sh/docs/cli/test) - pre-configured unit-testing powered by [Bun](https://bun.sh/docs/cli/test)
-- 🤖 [Renovate](https://renovatebot.com/) - optimized & automated PR dependency updates
-- 🎨 [ESLint](https://eslint.org/) - for code linting _(and formatting)_
-- 📦️ [pkg.pr.new](https://pkg.pr.new) - Continuous (Preview) Releases for your libraries
-- 🐙 [GitHub Actions](https://github.com/features/actions) - runs your CI _(fixes code style issues, tags releases & creates its changelogs, runs the test suite, etc.)_
-- 🚀 [Stacks.js Onboarding](https://stacks.js.org) - Interactive CLI for setting up Stacks.js projects
+- 🛠️ **Powerful CLI Framework** - Build robust command-line applications with an elegant API
+- 💎 **Beautiful Prompts** - Create engaging user experiences through interactive CLI prompts
+- 🧠 **TypeScript-First** - Fully typed APIs for improved developer experience
+- ⚡ **Bun-Powered** - Lightning fast execution backed by Bun's runtime
+- 📚 **Documentation-Ready** - Integrate with VitePress for beautiful documentation
+- 🧪 **Testing Built-In** - Unit testing powered by Bun's test runner
+- 🐙 **CI/CD Ready** - GitHub Actions, Renovate, and more
+
+## Interactive Prompts
+
+Create beautiful, interactive command-line experiences with our pre-styled prompt components:
+
+```ts
+import { confirm, intro, multiselect, outro, select, spinner, text } from '@stacksjs/clapp'
+
+// Start an interactive session
+intro('Project Setup Wizard')
+
+// Simple text input
+const name = await text({
+  message: 'What is your project name?',
+  placeholder: 'my-awesome-project',
+  validate(value) {
+    if (value.length === 0)
+      return 'Name is required!'
+  },
+})
+
+// Yes/no confirmation
+const useTypeScript = await confirm({
+  message: 'Do you want to use TypeScript?'
+})
+
+// Single selection from a list
+const framework = await select({
+  message: 'Select a framework:',
+  options: [
+    { value: 'react', label: 'React' },
+    { value: 'vue', label: 'Vue', hint: 'recommended' },
+    { value: 'svelte', label: 'Svelte' },
+  ],
+})
+
+// Multiple selections
+const features = await multiselect({
+  message: 'Select additional features:',
+  options: [
+    { value: 'router', label: 'Router' },
+    { value: 'state', label: 'State Management' },
+    { value: 'testing', label: 'Testing' },
+  ],
+  required: false,
+})
+
+// Show a spinner for long-running tasks
+const s = spinner()
+s.start('Installing dependencies')
+
+// Simulate installation
+await new Promise(resolve => setTimeout(resolve, 2000))
+
+s.stop('Installation complete!')
+
+// End the session
+outro('You\'re all set! Happy coding!')
+```
+
+### Prompt Components
+
+- **text**: Single line text input
+- **confirm**: Yes/no confirmation
+- **select**: Single selection from a list of options
+- **multiselect**: Multiple selections from a list of options
+- **spinner**: Show a loading indicator for async operations
+- **password**: Masked input for sensitive information
+
+## CLI Framework
+
+Build powerful command-line applications with a simple and elegant API inspired by CAC:
+
+```js
+import { CLI } from '@stacksjs/clapp'
+
+const cli = new CLI('todo-app')
+  .version('1.0.0')
+  .help()
+
+cli
+  .command('add <task>', 'Add a new task')
+  .option('-p, --priority <level>', 'Priority level (high, medium, low)')
+  .action((task, options) => {
+    console.log(`Adding task: ${task} with priority: ${options.priority || 'medium'}`)
+  })
+
+cli
+  .command('list', 'List all tasks')
+  .option('-a, --all', 'Show all tasks including completed ones')
+  .action((options) => {
+    console.log(`Listing ${options.all ? 'all' : 'pending'} tasks`)
+  })
+
+cli.parse()
+```
 
 ## Get Started
 
-It's rather simple to get your package development started:
+Getting started with clapp is simple:
 
 ```bash
-# you may use this GitHub template or the following command:
-bunx degit stacksjs/clapp my-pkg
-cd my-pkg
+# Use this GitHub template or run the following command:
+bunx degit stacksjs/clapp my-cli-app
+cd my-cli-app
 
-bun i # install all deps
-bun run build # builds the library for production-ready use
+# Install dependencies
+bun install
 
-# after you have successfully committed, you may create a "release"
-bun run release # automates git commits, versioning, and changelog generations
+# Build the library
+bun run build
+
+# After you commit changes, you can create a release
+bun run release # automates versioning and changelog generation
 ```
-
-_Check out the package.json scripts for more commands._
 
 ## Stacks.js Setup
 
-To create a new Stacks.js project using the interactive onboarding process:
+To create a new Stacks.js project with an interactive setup:
 
 ```bash
 # Using npx
@@ -56,18 +152,11 @@ npm install -g clapp
 stacks-init
 ```
 
-The CLI will guide you through the setup process, allowing you to configure:
-
-- Project name and description
-- Database type (PostgreSQL, MySQL, SQLite, MongoDB)
-- Features to include (Authentication, APIs, Admin Dashboard, etc.)
-- TypeORM integration
-- Git initialization
-- Dependency installation
-
-After completing the wizard, you'll have a fully configured Stacks.js project ready for development.
+The wizard will guide you through configuring your project with database options, features, and more.
 
 ## Testing
+
+Run the test suite with:
 
 ```bash
 bun test

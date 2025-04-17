@@ -53,16 +53,42 @@ const sidebar = [
   {
     text: 'Get Started',
     items: [
-      { text: 'Intro', link: '/intro' },
-      { text: 'Install', link: '/install' },
-      { text: 'Usage', link: '/usage' },
-      { text: 'Config', link: '/config' },
+      { text: 'Introduction', link: '/intro' },
+      { text: 'Installation', link: '/install' },
+      { text: 'Quick Start', link: '/usage' },
+      { text: 'Configuration', link: '/config' },
     ],
   },
-  { text: 'Showcase', link: '/Showcase' },
+  {
+    text: 'Features',
+    items: [
+      { text: 'CLI Framework', link: '/features/cli-framework' },
+      { text: 'Interactive Prompts', link: '/features/prompts' },
+      { text: 'Stacks.js Integration', link: '/features/stacks-integration' },
+    ],
+  },
+  {
+    text: 'Advanced',
+    items: [
+      { text: 'Creating Commands', link: '/advanced/commands' },
+      { text: 'Custom Prompts', link: '/advanced/custom-prompts' },
+      { text: 'Building Binaries', link: '/advanced/binaries' },
+    ],
+  },
+  {
+    text: 'API Reference',
+    items: [
+      { text: 'CLI', link: '/api/cli' },
+      { text: 'Command', link: '/api/command' },
+      { text: 'Option', link: '/api/option' },
+      { text: 'Prompts', link: '/api/prompts' },
+    ],
+  },
+  { text: 'Showcase', link: '/showcase' },
 ]
-const description = 'A TypeScript Starter Kit. For a better Development Experience.'
-const title = 'clapp | A TypeScript Starter Kit. For a better Development Experience.'
+
+const description = 'An elegant, TypeScript-first CLI framework built on Bun for creating beautiful command-line applications with interactive prompts.'
+const title = 'clapp | CLI Framework with Beautiful Prompts'
 
 export default withPwa(
   defineConfig({
@@ -82,7 +108,7 @@ export default withPwa(
       ['meta', { name: 'author', content: 'Stacks.js, Inc.' }],
       ['meta', {
         name: 'tags',
-        content: 'clapp, stacksjs, reverse proxy, modern, lightweight, zero-config, local development',
+        content: 'clapp, stacksjs, CLI framework, prompts, TypeScript, command-line, interactive, Bun',
       }],
 
       ['meta', { property: 'og:type', content: 'website' }],
@@ -92,7 +118,7 @@ export default withPwa(
 
       ['meta', { property: 'og:site_name', content: 'clapp' }],
       ['meta', { property: 'og:image', content: './images/og-image.jpg' }],
-      ['meta', { property: 'og:url', content: 'https://reverse-proxy.sh/' }],
+      ['meta', { property: 'og:url', content: 'https://clapp.sh/' }],
       // ['script', { 'src': 'https://cdn.usefathom.com/script.js', 'data-site': '', 'data-spa': 'auto', 'defer': '' }],
       ...analyticsHead,
     ],
@@ -110,7 +136,7 @@ export default withPwa(
       sidebar,
 
       editLink: {
-        pattern: 'https://github.com/stacksjs/stacks/edit/main/docs/docs/:path',
+        pattern: 'https://github.com/stackjs/clapp/edit/main/docs/docs/:path',
         text: 'Edit this page on GitHub',
       },
 
@@ -146,9 +172,10 @@ export default withPwa(
         dark: 'github-dark',
       },
 
-      codeTransformers: [
-        transformerTwoslash(),
-      ],
+      // Comment out the transformerTwoslash to avoid type issues
+      // codeTransformers: [
+      //   transformerTwoslash(),
+      // ],
     },
 
     vite: viteConfig,
