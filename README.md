@@ -111,7 +111,7 @@ The MIT License (MIT). Please see [LICENSE](LICENSE.md) for more information.
 Made with 💙
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/clapp?style=flat-square
+[npm-version-src]: https://img.shields.io/npm/v/@stacksjs/clapp?style=flat-square
 [npm-version-href]: https://npmjs.com/package/@stacksjs/clapp
 [github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/clapp/ci.yml?style=flat-square&branch=main
 [github-actions-href]: https://github.com/stacksjs/clapp/actions?query=workflow%3Aci
