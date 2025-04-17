@@ -14,10 +14,10 @@ You can import the testing utilities from the package:
 
 ```ts
 // ESM
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 
 // CommonJS
-const { createTestCLI, execCommand } = require('@stacksjs/clapp/testing')
+const { createTestCLI, execCommand } = require('@stacksjs/clapp')
 ```
 
 ## API Reference
@@ -182,7 +182,7 @@ await cleanupTestFS(testDir)
 ### Basic Command Testing
 
 ```ts
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 import { expect, test } from 'vitest'
 
 test('greet command should work with name option', async () => {
@@ -203,7 +203,7 @@ test('greet command should work with name option', async () => {
 
 ```ts
 import { prompt } from '@stacksjs/clapp'
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 import { expect, test } from 'vitest'
 
 test('interactive command with prompts', async () => {
@@ -229,7 +229,7 @@ test('interactive command with prompts', async () => {
 ```ts
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { cleanupTestFS, createTestCLI, createTestFS, execCommand } from '@stacksjs/clapp/testing'
+import { cleanupTestFS, createTestCLI, createTestFS, execCommand } from '@stacksjs/clapp'
 import { afterEach, beforeEach, expect, test } from 'vitest'
 
 let testDir
