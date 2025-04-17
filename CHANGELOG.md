@@ -1,4 +1,17 @@
 
+## v0.0.1...main
+
+[compare changes](https://github.com/stacksjs/clapp/compare/v0.0.1...main)
+
+### 🏡 Chore
+
+- Wip ([627fcc6](https://github.com/stacksjs/clapp/commit/627fcc6))
+- Wip ([8d95b8f](https://github.com/stacksjs/clapp/commit/8d95b8f))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## ...main
 
 
