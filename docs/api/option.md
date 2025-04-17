@@ -308,7 +308,7 @@ command('serve')
     default: 3000,
     coerce: value => Number.parseInt(value, 10),
     validate: (value) => {
-      if (isNaN(value) || value < 1 || value > 65535)
+      if (Number.isNaN(value) || value < 1 || value > 65535)
         return 'Port must be a number between 1 and 65535'
       return true
     },

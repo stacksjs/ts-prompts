@@ -42,7 +42,7 @@ const ratingPrompt = createPrompt({
   initialValue: 3,
   validate: (value) => {
     const rating = Number(value)
-    if (isNaN(rating) || rating < 1 || rating > 5)
+    if (Number.isNaN(rating) || rating < 1 || rating > 5)
       return 'Rating must be between 1 and 5'
     return true
   },
@@ -138,7 +138,7 @@ const formPrompt = createPrompt({
       errors.push('Email must be valid')
 
     const age = Number(value.age)
-    if (isNaN(age) || age < 18)
+    if (Number.isNaN(age) || age < 18)
       errors.push('Age must be at least 18')
 
     return errors.length ? errors.join('\n') : true

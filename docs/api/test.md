@@ -32,8 +32,7 @@ The `createTestCLI` function accepts the same options as the regular `cli` funct
 Prepares a CLI instance for testing by disabling process exits and redirecting outputs.
 
 ```ts
-import { cli } from '@stacksjs/clapp'
-import { setupTest } from '@stacksjs/clapp'
+import { cli, setupTest } from '@stacksjs/clapp'
 
 // Create a regular CLI instance
 const myCLI = cli({
@@ -220,8 +219,7 @@ describe('CLI Application', () => {
 ### Testing Interactive Commands
 
 ```ts
-import { prompt } from '@stacksjs/clapp'
-import { createTestCLI, execCommand } from '@stacksjs/clapp'
+import { createTestCLI, execCommand, prompt } from '@stacksjs/clapp'
 
 // Create a CLI with interactive prompts
 const testCLI = createTestCLI({

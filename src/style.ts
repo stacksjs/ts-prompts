@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import process from 'node:process'
 
 interface Styler {
@@ -196,27 +197,27 @@ export function box(content: string, options?: { padding?: number, borderColor?:
   const totalWidth = innerWidth
 
   // Top border with title
-  // eslint-disable-next-line no-console
+
   console.log(`┌${title ? '─'.repeat(Math.floor((totalWidth - title.length) / 2)) + title + '─'.repeat(Math.ceil((totalWidth - title.length) / 2)) : '─'.repeat(totalWidth)}┐`)
 
   // Empty line after top border
-  // eslint-disable-next-line no-console
+
   console.log(`│${' '.repeat(totalWidth)}│`)
 
   // Content lines with padding
   for (const line of lines) {
     // Calculate right padding to align the right border
     const rightPadding = innerWidth - line.length - padding
-    // eslint-disable-next-line no-console
+
     console.log(`│${paddingStr}${line}${' '.repeat(rightPadding)}│`)
   }
 
   // Empty line before bottom border
-  // eslint-disable-next-line no-console
+
   console.log(`│${' '.repeat(totalWidth)}│`)
 
   // Bottom border
-  // eslint-disable-next-line no-console
+
   console.log(`└${'─'.repeat(totalWidth)}┘`)
 }
 
@@ -231,27 +232,27 @@ export function panel(options: { title?: string, content: string, borderColor?: 
   const innerWidth = contentWidth + 2 // +2 for the space on each side
 
   // Top border with title - using double line for panels
-  // eslint-disable-next-line no-console
+
   console.log(`╔${title ? '═'.repeat(Math.floor((innerWidth - title.length) / 2)) + title + '═'.repeat(Math.ceil((innerWidth - title.length) / 2)) : '═'.repeat(innerWidth)}╗`)
 
   // Empty line after top border
-  // eslint-disable-next-line no-console
+
   console.log(`║${' '.repeat(innerWidth)}║`)
 
   // Content lines
   for (const line of lines) {
     // Calculate right padding to align the right border
     const rightPadding = innerWidth - line.length - 1
-    // eslint-disable-next-line no-console
+
     console.log(`║ ${line}${' '.repeat(rightPadding)}║`)
   }
 
   // Empty line before bottom border
-  // eslint-disable-next-line no-console
+
   console.log(`║${' '.repeat(innerWidth)}║`)
 
   // Bottom border
-  // eslint-disable-next-line no-console
+
   console.log(`╚${'═'.repeat(innerWidth)}╝`)
 }
 

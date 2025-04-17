@@ -155,12 +155,12 @@ command('resize')
     const width = Number(options.width)
     const height = Number(options.height)
 
-    if (options.width && isNaN(width)) {
+    if (options.width && Number.isNaN(width)) {
       console.error('Error: Width must be a number')
       return
     }
 
-    if (options.height && isNaN(height)) {
+    if (options.height && Number.isNaN(height)) {
       console.error('Error: Height must be a number')
       return
     }

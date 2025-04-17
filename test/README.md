@@ -202,8 +202,7 @@ test('greet command should work with name option', async () => {
 ### Testing Prompts
 
 ```ts
-import { prompt } from '@stacksjs/clapp'
-import { createTestCLI, execCommand } from '@stacksjs/clapp'
+import { createTestCLI, execCommand, prompt } from '@stacksjs/clapp'
 import { expect, test } from 'vitest'
 
 test('interactive command with prompts', async () => {

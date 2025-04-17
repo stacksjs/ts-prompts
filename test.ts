@@ -1,4 +1,4 @@
-import { setAccessibility, style, table, box, panel, spinner, progress, log } from './src/style'
+import { box, log, panel, setAccessibility, style, table } from './src/style'
 
 // Force color support to be enabled regardless of environment
 setAccessibility({ colors: true })
@@ -28,7 +28,7 @@ table([
   ['Name', 'Age', 'City'],
   ['John', '28', 'New York'],
   ['Alice', '24', 'London'],
-  ['Bob', '31', 'Paris']
+  ['Bob', '31', 'Paris'],
 ], { header: true, border: true })
 
 // Box example
@@ -36,7 +36,7 @@ table([
 console.log('\nBox Example:')
 box('This is a sample content\nWith multiple lines\nIn a nice box', {
   title: 'Box Demo',
-  padding: 1
+  padding: 1,
 })
 
 // Panel example
@@ -44,7 +44,7 @@ box('This is a sample content\nWith multiple lines\nIn a nice box', {
 console.log('\nPanel Example:')
 panel({
   title: 'Panel Demo',
-  content: 'This is a sample panel\nWith custom styling'
+  content: 'This is a sample panel\nWith custom styling',
 })
 
 // Log examples
