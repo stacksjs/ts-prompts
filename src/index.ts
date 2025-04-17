@@ -1,6 +1,5 @@
 import { CLI, cli } from './CLI'
 import Command from './Command'
-import * as testingUtils from './testing'
 
 export { CLI, cli, Command }
 
@@ -19,9 +18,22 @@ export { block, isCancel } from './runtimes/utils/index'
 export type { Settings } from './runtimes/utils/settings'
 export { settings, updateSettings } from './runtimes/utils/settings'
 
+// Also export testing utilities directly
+export {
+  captureOutput,
+  cleanupTestFS,
+  createTestCLI,
+  createTestFS,
+  execCommand,
+  getLastOutput,
+  mockPrompt,
+  resetMockPrompts,
+  setupTest,
+  teardownTest,
+} from './testing'
+
 export type { PromptState } from './types'
 
 export * from './utils'
-export { testingUtils }
 
 export default cli

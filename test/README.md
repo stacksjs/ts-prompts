@@ -40,13 +40,12 @@ testCLI.command('greet')
   .action(({ name }) => `Hello, ${name || 'world'}!`)
 ```
 
-#### `setupTest(cli)`
+#### `setupTest()`
 
 Prepares a CLI instance for testing by disabling process exits and redirecting outputs.
 
 ```ts
-import { cli } from '@stacksjs/clapp'
-import { setupTest } from '@stacksjs/clapp/testing'
+import { cli, setupTest } from '@stacksjs/clapp'
 
 // Create a regular CLI instance
 const myCLI = cli({
@@ -55,7 +54,9 @@ const myCLI = cli({
 })
 
 // Setup the CLI for testing
-const testContext = setupTest(myCLI)
+const testContext = setupTest()
+
+// ...
 ```
 
 #### `execCommand(cli, argv, options?)`

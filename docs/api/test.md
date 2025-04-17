@@ -9,7 +9,7 @@ Clapp provides built-in testing utilities to make it easier to test your CLI app
 Creates a test instance of a CLI application, enabling isolated testing without side effects.
 
 ```ts
-import { createTestCLI } from '@stacksjs/clapp/testing'
+import { createTestCLI } from '@stacksjs/clapp'
 
 // Create a test CLI instance
 const testCLI = createTestCLI({
@@ -33,7 +33,7 @@ Prepares a CLI instance for testing by disabling process exits and redirecting o
 
 ```ts
 import { cli } from '@stacksjs/clapp'
-import { setupTest } from '@stacksjs/clapp/testing'
+import { setupTest } from '@stacksjs/clapp'
 
 // Create a regular CLI instance
 const myCLI = cli({
@@ -52,7 +52,7 @@ const testContext = setupTest(myCLI)
 Executes a command on the CLI instance and returns the result.
 
 ```ts
-import { execCommand } from '@stacksjs/clapp/testing'
+import { execCommand } from '@stacksjs/clapp'
 
 // Execute a command
 const result = await execCommand(testCLI, ['greet', '--name', 'Alice'])
@@ -87,7 +87,7 @@ expect(result.exitCode).toBe(0)
 Mocks user responses to interactive prompts.
 
 ```ts
-import { mockPrompt } from '@stacksjs/clapp/testing'
+import { mockPrompt } from '@stacksjs/clapp'
 
 // Mock user responses for prompts
 mockPrompt({
@@ -113,7 +113,7 @@ const result = await execCommand(testCLI, ['interactive'])
 Captures all output during test execution.
 
 ```ts
-import { captureOutput } from '@stacksjs/clapp/testing'
+import { captureOutput } from '@stacksjs/clapp'
 
 // Start capturing output
 const capture = captureOutput()
@@ -134,7 +134,7 @@ expect(output.stderr).toBeEmpty()
 Gets the most recent output from the test CLI.
 
 ```ts
-import { getLastOutput } from '@stacksjs/clapp/testing'
+import { getLastOutput } from '@stacksjs/clapp'
 
 // Execute a command
 await testCLI.run(['greet', '--name', 'Charlie'])
@@ -151,7 +151,7 @@ expect(lastOutput).toContain('Hello, Charlie!')
 ### Jest Integration
 
 ```ts
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 
 describe('CLI Application', () => {
   let testCLI
@@ -184,7 +184,7 @@ describe('CLI Application', () => {
 ### Vitest Integration
 
 ```ts
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 describe('CLI Application', () => {
@@ -221,7 +221,7 @@ describe('CLI Application', () => {
 
 ```ts
 import { prompt } from '@stacksjs/clapp'
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 
 // Create a CLI with interactive prompts
 const testCLI = createTestCLI({
@@ -254,7 +254,7 @@ expect(result.stdout).toContain('Hello, Alice! You are 30 years old.')
 ```ts
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { cleanupTestFS, createTestCLI, createTestFS, execCommand } from '@stacksjs/clapp/testing'
+import { cleanupTestFS, createTestCLI, createTestFS, execCommand } from '@stacksjs/clapp'
 
 describe('File operations', () => {
   let testDir
@@ -303,7 +303,7 @@ describe('File operations', () => {
 ### Testing Exit Codes
 
 ```ts
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 
 const testCLI = createTestCLI({
   name: 'test-cli',
@@ -332,7 +332,7 @@ expect(failResult.stderr).toContain('Command failed')
 ### Testing Help Output
 
 ```ts
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 
 const testCLI = createTestCLI({
   name: 'test-cli',
@@ -359,7 +359,7 @@ expect(commandHelpResult.stdout).toContain('--verbose')
 ### Testing with Timers
 
 ```ts
-import { createTestCLI, execCommand } from '@stacksjs/clapp/testing'
+import { createTestCLI, execCommand } from '@stacksjs/clapp'
 
 const testCLI = createTestCLI({
   name: 'test-cli',

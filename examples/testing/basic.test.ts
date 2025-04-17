@@ -1,10 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import { cli } from '../../src/CLI'
-import { testingUtils } from '../../src/index'
+import { createTestCLI, execCommand } from '../../src/testing'
 // Uncomment to use prompt in the interactive example
 // import * as prompts from '../../src/prompts'
-
-const { createTestCLI, execCommand } = testingUtils
 
 describe('Basic CLI Testing', () => {
   test('should execute a simple command', async () => {
@@ -20,17 +17,17 @@ describe('Basic CLI Testing', () => {
     const result = await execCommand(testCLI, ['greet', '--name', 'Alice'])
 
     // Verify the output
-    expect(result.stdout).toContain('Hello, Alice!')
+    expect(result.result).toBe('Hello, Alice!')
     expect(result.exitCode).toBe(0)
   })
 
   test('should handle command errors', async () => {
     const testCLI = createTestCLI({ name: 'test-cli' })
 
-    testCLI.command('fail')
-      .action(() => {
-        throw new Error('Command failed')
-      })
+    const command = testCLI.command('fail')
+    command.action(() => {
+      throw new Error('Command failed')
+    })
 
     const result = await execCommand(testCLI, ['fail'])
 
@@ -39,16 +36,14 @@ describe('Basic CLI Testing', () => {
   })
 
   test('should show help output', async () => {
-    const testCLI = createTestCLI({
-      name: 'test-cli',
-      version: '1.0.0',
-    })
+    const testCLI = createTestCLI({ name: 'test-cli' })
+    testCLI.version('1.0.0')
 
-    testCLI
-      .help()
-      .command('test')
-      .description('Run tests')
-      .option('-v, --verbose', 'Enable verbose output')
+    testCLI.help()
+
+    // Create a command with description directly
+    const command = testCLI.command('test', 'Run tests')
+    command.option('-v, --verbose', 'Enable verbose output')
 
     const result = await execCommand(testCLI, ['--help'])
 

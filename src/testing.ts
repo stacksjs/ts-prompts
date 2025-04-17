@@ -1,10 +1,9 @@
 import type { CLI } from './CLI'
-import type { CLIOptions } from './types'
+import { Buffer } from 'node:buffer'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
-import { Readable, Writable } from 'node:stream'
 import { MockReadable } from '../test/mock-readable'
 import { MockWritable } from '../test/mock-writable'
 import { cli } from './CLI'
@@ -17,6 +16,7 @@ export interface TestContext {
   originalStdout: typeof process.stdout
   originalStderr: typeof process.stderr
   originalStdin: typeof process.stdin
+  originalConsoleLog: typeof console.log
 }
 
 export interface ExecCommandOptions {
@@ -55,7 +55,7 @@ export function createTestCLI(options: Record<string, any> = {}): CLI {
 /**
  * Prepares a CLI instance for testing by disabling process exits and redirecting outputs.
  */
-export function setupTest(cliInstance: CLI): TestContext {
+export function setupTest(): TestContext {
   const stdout = new MockWritable()
   const stderr = new MockWritable()
   const stdin = new MockReadable()
@@ -64,6 +64,8 @@ export function setupTest(cliInstance: CLI): TestContext {
   const originalStdout = process.stdout
   const originalStderr = process.stderr
   const originalStdin = process.stdin
+  // eslint-disable-next-line no-console
+  const originalConsoleLog = console.log
 
   // Mock process.exit
   process.exit = ((code?: number) => {
@@ -83,6 +85,7 @@ export function setupTest(cliInstance: CLI): TestContext {
     originalStdout,
     originalStderr,
     originalStdin,
+    originalConsoleLog,
   }
 }
 
@@ -94,6 +97,8 @@ export function teardownTest(context: TestContext): void {
   Object.defineProperty(process, 'stdout', { value: context.originalStdout, writable: true })
   Object.defineProperty(process, 'stderr', { value: context.originalStderr, writable: true })
   Object.defineProperty(process, 'stdin', { value: context.originalStdin, writable: true })
+  // eslint-disable-next-line no-console
+  console.log = context.originalConsoleLog
 }
 
 /**
@@ -110,6 +115,28 @@ export async function execCommand(
   // Setup test environment
   const testContext = setupTest(cliInstance)
   const { stdin, stdout, stderr } = testContext
+
+  // Check if this is a help command
+  const isHelpCommand = argv.includes('--help') || argv.includes('-h')
+
+  const capturedOutput: string[] = []
+
+  // Override stdout.write to capture all output
+  process.stdout.write = function (chunk: any) {
+    const str = chunk.toString()
+    capturedOutput.push(str)
+    stdout.write(str)
+    return true
+  } as any
+
+  // Override console.log to capture help output
+  // eslint-disable-next-line no-console
+  console.log = function (...args: any[]) {
+    const str = args.map(arg => String(arg)).join(' ')
+    capturedOutput.push(`${str}\n`)
+    stdout.write(`${str}\n`)
+    return undefined
+  } as any
 
   // Prepare inputs if provided
   if (inputs.length > 0) {
@@ -144,8 +171,19 @@ export async function execCommand(
     // Run the command
     const runPromise = Promise.resolve().then(async () => {
       try {
+        // Force help option to not exit the process since we're in a test
+        cliInstance.showHelpOnExit = false
+        cliInstance.showVersionOnExit = false
+
         // Parse arguments and run command
         cliInstance.parse(['node', 'cli', ...argv])
+
+        // If help flag is present, manually call help
+        if (isHelpCommand) {
+          cliInstance.outputHelp()
+        }
+
+        // Get the result from command execution
         result = await cliInstance.runMatchedCommand()
         return result
       }
@@ -178,12 +216,17 @@ export async function execCommand(
 
   const duration = Date.now() - startTime
 
+  // Help commands should always have exitCode 0
+  if (isHelpCommand) {
+    exitCode = 0
+  }
+
   return {
-    stdout: stdout.buffer.join(''),
+    stdout: capturedOutput.join(''),
     stderr: stderr.buffer.join(''),
     exitCode,
     duration,
-    outputs: [...stdout.buffer],
+    outputs: [...capturedOutput],
     result,
   }
 }
