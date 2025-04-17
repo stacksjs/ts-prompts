@@ -283,6 +283,7 @@ interface Spinner {
   succeed: (successText?: string) => Spinner
   fail: (failText?: string) => Spinner
   text: string
+  dots: (enable: boolean, maxDots?: number) => Spinner
 }
 
 export function spinner(text?: string): Spinner {
@@ -290,19 +291,30 @@ export function spinner(text?: string): Spinner {
   let i = 0
   let interval: NodeJS.Timeout | null = null
   let currentText = text || ''
+  let useDots = false
+  let dotCount = 0
+  let maxDots = 3
+  let dotInterval: NodeJS.Timeout | null = null
 
   const spinnerObj: Spinner = {
     start: (startText?: string): Spinner => {
       if (startText)
         currentText = startText
+
       interval = setInterval(() => {
-        process.stdout.write(`\r${frames[i = ++i % frames.length]} ${currentText}`)
+        const frame = frames[i = ++i % frames.length]
+        const displayText = useDots ? `${currentText}${'.'.repeat(dotCount)}` : currentText
+        // Clear the line first to avoid highlighting artifacts
+        process.stdout.write('\r' + ' '.repeat(40) + '\r')
+        process.stdout.write(`${frame} ${displayText}`)
       }, 80)
+
       return spinnerObj
     },
     stop: (): Spinner => {
       if (interval) {
         clearInterval(interval)
+        if (dotInterval) clearInterval(dotInterval)
         process.stdout.write('\r \r')
       }
       return spinnerObj
@@ -310,6 +322,7 @@ export function spinner(text?: string): Spinner {
     succeed: (successText?: string): Spinner => {
       if (interval) {
         clearInterval(interval)
+        if (dotInterval) clearInterval(dotInterval)
         process.stdout.write(`\r✓ ${successText || currentText}\n`)
       }
       return spinnerObj
@@ -317,6 +330,7 @@ export function spinner(text?: string): Spinner {
     fail: (failText?: string): Spinner => {
       if (interval) {
         clearInterval(interval)
+        if (dotInterval) clearInterval(dotInterval)
         process.stdout.write(`\r✗ ${failText || currentText}\n`)
       }
       return spinnerObj
@@ -327,12 +341,28 @@ export function spinner(text?: string): Spinner {
     get text(): string {
       return currentText
     },
+    // New method to enable/disable dot animation
+    dots: (enable: boolean, dots: number = 3): Spinner => {
+      useDots = enable
+      maxDots = dots
+
+      if (enable && !dotInterval) {
+        dotInterval = setInterval(() => {
+          dotCount = (dotCount + 1) % (maxDots + 1)
+        }, 500)
+      } else if (!enable && dotInterval) {
+        clearInterval(dotInterval)
+        dotInterval = null
+        dotCount = 0
+      }
+
+      return spinnerObj
+    }
   }
 
   return spinnerObj
 }
 
-// Table function placeholder
 export function table(data: string[][], options?: { border?: boolean, header?: boolean, align?: ('left' | 'right' | 'center')[] }): void {
   // Simple implementation for demonstration
   if (!data || data.length === 0)

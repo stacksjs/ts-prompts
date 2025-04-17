@@ -1,4 +1,4 @@
-import { box, log, panel, setAccessibility, style, table } from './src/style'
+import { box, log, panel, progress, setAccessibility, spinner, style, table } from './src/style'
 
 // Force color support to be enabled regardless of environment
 setAccessibility({ colors: true })
@@ -57,20 +57,22 @@ log.error('This is an error message')
 log.custom('★', 'This is a custom log message', 'cyan')
 
 // Progress bar example (commented out as it requires time to demonstrate)
-/*
 const bar = progress.bar({ title: 'Loading', total: 100 })
 for (let i = 0; i <= 100; i += 10) {
   bar.update(i)
-  // In real usage, this would have a delay between updates
+  // add a delay between updates
+  await new Promise(resolve => setTimeout(resolve, 200))
 }
 bar.stop()
-*/
 
-// Spinner example (commented out as it requires time to demonstrate)
-/*
+// Spinner example with progressive dots
+console.log('\nSpinner Example:')
+// Use our enhanced spinner with built-in dots animation
 const spin = spinner('Processing')
-// In real usage, this would run for some time
+  .dots(true, 3) // Enable dot animation with max 3 dots
+  .start()
+
+// Complete the spinner after 6 seconds
 setTimeout(() => {
   spin.succeed('Processing complete')
-}, 2000)
-*/
+}, 6000)
