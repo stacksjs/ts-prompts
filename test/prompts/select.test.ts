@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
-import SelectPrompt from '../../src/core/prompts/select'
+import SelectPrompt from '../../src/prompts/select'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
 import { MockWritable } from '../mock-writable'

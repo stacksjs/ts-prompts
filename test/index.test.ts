@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'bun:test'
 import { EventEmitter, Readable, Writable } from 'node:stream'
 import colors from 'picocolors'
-import { settings } from '../src/core/utils/settings'
+import { settings } from '../src/runtimes/utils/settings'
 import * as prompts from '../src/prompts'
 
 // TODO (43081j): move this into a util?

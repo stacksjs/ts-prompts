@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
-import ConfirmPrompt from '../../src/core/prompts/confirm'
+import ConfirmPrompt from '../../src/prompts/confirm'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
 import { MockWritable } from '../mock-writable'

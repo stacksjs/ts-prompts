@@ -1,7 +1,7 @@
 import type { Key } from 'node:readline'
 import { afterEach, describe, expect, it } from 'bun:test'
 import { Buffer } from 'node:buffer'
-import { block } from '../src/core/utils/index'
+import { block } from '../src/runtimes/utils/index'
 import { cursor } from '../src/utils'
 import { MockReadable } from './mock-readable'
 import { MockWritable } from './mock-writable'

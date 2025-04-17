@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
-import Prompt from '../../src/core/prompts/prompt'
-import { isCancel } from '../../src/core/utils/index'
+import Prompt from '../../src/prompts/prompt'
+import { isCancel } from '../../src/runtimes/utils/index'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
 import { MockWritable } from '../mock-writable'

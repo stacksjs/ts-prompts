@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
 import color from 'picocolors'
-import TextPrompt from '../../src/core/prompts/text'
+import TextPrompt from '../../src/prompts/text'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
 import { MockWritable } from '../mock-writable'

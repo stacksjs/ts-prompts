@@ -1,5 +1,5 @@
 import type { Readable, Writable } from 'node:stream'
-import type { State } from './core'
+import type { PromptState as State } from './types'
 import process from 'node:process'
 import { WriteStream } from 'node:tty'
 import { stripVTControlCharacters as strip } from 'node:util'
@@ -14,8 +14,8 @@ import {
   SelectKeyPrompt,
   SelectPrompt,
   TextPrompt,
-} from './core'
-import { settings, updateSettings } from './core/utils/settings'
+} from './'
+import { settings, updateSettings } from './runtimes/utils/settings'
 import { cursor, erase, isUnicodeSupported } from './utils'
 
 export { isCancel, updateSettings }

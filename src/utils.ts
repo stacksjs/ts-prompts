@@ -1,5 +1,4 @@
 import type Option from './Option'
-
 import process from 'node:process'
 
 export function removeBrackets(v: string): string {
@@ -287,6 +286,7 @@ export const erase: Erase = {
 export interface Clear {
   screen: string
 }
+
 export const clear: Clear = {
   screen: `${ESC}c`,
 }

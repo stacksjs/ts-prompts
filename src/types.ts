@@ -1,4 +1,4 @@
-import type { Action } from './utils/settings'
+import type { Action } from './runtimes/utils/settings'
 
 /**
  * The state of the prompt
