@@ -50,7 +50,7 @@ interface StylerFunction {
 }
 
 // ANSI color codes
-const codes = {
+const codes: Record<string, [string, string]> = {
   // Text colors
   red: ['\x1B[31m', '\x1B[39m'],
   green: ['\x1B[32m', '\x1B[39m'],
@@ -80,7 +80,7 @@ const codes = {
 }
 
 // Theme defaults (populated via setTheme)
-let theme: Record<string, string> = {
+const theme = {
   primary: 'blue',
   secondary: 'cyan',
   success: 'green',
@@ -88,107 +88,89 @@ let theme: Record<string, string> = {
   error: 'red',
   info: 'magenta',
   muted: 'gray',
-}
+} as Record<string, string>
 
 // Feature detection for color support
 function detectColorSupport(): boolean {
-  // Check for NO_COLOR env variable
-  if (process.env.NO_COLOR !== undefined)
-    return false
-
-  // Check for FORCE_COLOR env variable
-  if (process.env.FORCE_COLOR !== undefined)
-    return true
-
-  // Check for CI environments which often don't support colors
-  if (process.env.CI !== undefined)
-    return false
-
-  // Check if stdout is a TTY
-  if (process.stdout && process.stdout.isTTY)
-    return true
-
-  return false
+  // Always enable colors for our implementation
+  return true
 }
 
-// Create the base style object
+// New styling implementation with proper chaining
 function createStyler(): Styler {
-  const styler: Styler = {} as Styler
-
-  // Detect color support
+  const styler = {} as Styler
   styler.supportsColor = detectColorSupport()
 
-  // Function to create a styler for a specific code
-  const createStylerFunction = (styleName: string): StylerFunction => {
-    const styleFunc = (text: string): string => {
+  // Simplified style function creator
+  function createStyleFunction(styleName: string, styles: string[] = []): StylerFunction {
+    const styleList = styleName === '' ? [] : [...styles, styleName]
+
+    // The actual styling function
+    const fn = function (text: string): string {
       if (!styler.supportsColor)
         return text
 
-      // For theme colors, redirect to the mapped color
-      if (styleName in theme) {
-        const mappedColor = theme[styleName as keyof typeof theme]
-        if (mappedColor in codes)
-          return `${codes[mappedColor as keyof typeof codes][0]}${text}${codes[mappedColor as keyof typeof codes][1]}`
+      // Apply all styles from the chain
+      let openCodes = ''
+      let closeCodes = ''
+
+      for (const style of styleList) {
+        // Handle theme styles
+        if (style in theme && theme[style] in codes) {
+          const themeStyle = theme[style]
+          openCodes += codes[themeStyle][0]
+          closeCodes = codes[themeStyle][1] + closeCodes
+        }
+        // Handle regular styles
+        else if (style in codes) {
+          openCodes += codes[style][0]
+          closeCodes = codes[style][1] + closeCodes
+        }
       }
 
-      // For regular colors/styles
-      if (styleName in codes)
-        return `${codes[styleName as keyof typeof codes][0]}${text}${codes[styleName as keyof typeof codes][1]}`
+      return openCodes + text + closeCodes
+    } as StylerFunction
 
-      return text
+    // Add all style properties to the function for chaining
+    const allStyles = [...Object.keys(codes), ...Object.keys(theme)]
+    for (const style of allStyles) {
+      if (!(style in fn)) {
+        Object.defineProperty(fn, style, {
+          get() {
+            return createStyleFunction(style, styleList)
+          },
+        })
+      }
     }
 
-    // Make each function chainable with every other style
-    Object.keys(codes).forEach((code) => {
-      Object.defineProperty(styleFunc, code, {
-        get: () => {
-          const combinedStyler = (text: string): string => {
-            // Apply the first style, then the chained style
-            return (codes[code as keyof typeof codes][0]
-              + (codes[styleName as keyof typeof codes]?.[0] || '')
-              + text
-              + (codes[styleName as keyof typeof codes]?.[1] || '')
-              + codes[code as keyof typeof codes][1])
-          }
-
-          // Make this new function also chainable
-          Object.keys(codes).forEach((nestedCode) => {
-            Object.defineProperty(combinedStyler, nestedCode, {
-              get: () => {
-                // This would handle color.red.bold.underline etc.
-                // But for simplicity we're not implementing deep nesting here
-                return createStylerFunction(`${styleName}.${code}.${nestedCode}`)
-              },
-            })
-          })
-
-          return combinedStyler
-        },
-      })
-    })
-
-    return styleFunc as StylerFunction
+    return fn
   }
 
-  // Add all style functions to the styler object
-  Object.keys(codes).forEach((code) => {
-    styler[code as keyof typeof codes] = createStylerFunction(code)
-  })
-
-  // Add theme colors
-  Object.keys(theme).forEach((themeColor) => {
-    styler[themeColor] = createStylerFunction(themeColor)
-  })
+  // Initialize with all available styles
+  const allStyles = [...Object.keys(codes), ...Object.keys(theme)]
+  for (const style of allStyles) {
+    if (!(style in styler)) {
+      Object.defineProperty(styler, style, {
+        get() {
+          return createStyleFunction(style)
+        },
+      })
+    }
+  }
 
   return styler
 }
 
-// Create the style object
-export const style = createStyler()
+export const style: Styler = createStyler()
 
 // Function to set custom theme
-export function setTheme(customTheme: Partial<typeof theme>): void {
-  theme = { ...theme, ...customTheme }
+export function setTheme(customTheme: Partial<Record<string, string>>): void {
+  // Safely merge the theme without type errors
+  for (const key in customTheme) {
+    if (customTheme[key] !== undefined) {
+      theme[key] = customTheme[key] as string
+    }
+  }
 }
 
 // Function to set accessibility options
@@ -208,14 +190,19 @@ export function box(content: string, options?: { padding?: number, borderColor?:
   const lines = content.split('\n')
   const width = Math.max(...lines.map(line => line.length)) + padding * 2
 
+  // eslint-disable-next-line no-console
   console.log(`┌${title ? '─'.repeat(Math.floor((width - title.length) / 2)) + title + '─'.repeat(Math.ceil((width - title.length) / 2)) : '─'.repeat(width + 2)}┐`)
+  // eslint-disable-next-line no-console
   console.log(`│${' '.repeat(width + 2)}│`)
 
   for (const line of lines) {
+    // eslint-disable-next-line no-console
     console.log(`│ ${paddingStr}${line}${' '.repeat(width - line.length - padding)}${paddingStr} │`)
   }
 
+  // eslint-disable-next-line no-console
   console.log(`│${' '.repeat(width + 2)}│`)
+  // eslint-disable-next-line no-console
   console.log(`└${'─'.repeat(width + 2)}┘`)
 }
 
@@ -306,7 +293,7 @@ export function table(data: string[][], options?: { border?: boolean, header?: b
     return
 
   // Calculate column widths
-  const colWidths: number[] = Array.from({ length: data[0].length }).fill(0)
+  const colWidths: number[] = Array.from({ length: data[0].length }, () => 0)
   for (const row of data) {
     for (let i = 0; i < row.length; i++) {
       colWidths[i] = Math.max(colWidths[i], String(row[i]).length)

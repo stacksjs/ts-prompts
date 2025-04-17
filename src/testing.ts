@@ -184,7 +184,7 @@ export async function execCommand(
         }
 
         // Get the result from command execution
-        result = await cliInstance.runMatchedCommand()
+        result = cliInstance.runMatchedCommand()
         return result
       }
       catch (error: any) {
