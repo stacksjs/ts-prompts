@@ -1,5 +1,5 @@
 import type { Key } from 'node:readline'
-import { afterEach, describe, expect, it } from 'bun:test'
+import { afterEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { Buffer } from 'node:buffer'
 import { block } from '../src/runtimes/utils/index'
 import { cursor } from '../src/utils'
@@ -8,7 +8,7 @@ import { MockWritable } from './mock-writable'
 
 describe('utils', () => {
   afterEach(() => {
-    vi.restoreAllMocks()
+    mock.restore()
   })
 
   describe('block', () => {
@@ -61,8 +61,8 @@ describe('utils', () => {
       // purposely don't keep the callback since we would exit the process
       block({ input, output })
       // @ts-expect-error - process.exit is mocked
-      const spy = vi.spyOn(process, 'exit').mockImplementation(() => {
-
+      const spy = spyOn(process, 'exit').mockImplementation(() => {
+        // mock implementation
       })
 
       const event: Key = {

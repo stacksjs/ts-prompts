@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import color from 'picocolors'
 import TextPrompt from '../../src/prompts/text'
 import { cursor } from '../../src/utils'
@@ -15,7 +15,7 @@ describe('textPrompt', () => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    mock.restore()
   })
 
   it('renders render() result', () => {

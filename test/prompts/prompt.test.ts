@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import Prompt from '../../src/prompts/prompt'
 import { isCancel } from '../../src/runtimes/utils/index'
 import { cursor } from '../../src/utils'
@@ -15,7 +15,7 @@ describe('prompt', () => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    mock.restore()
   })
 
   it('renders render() result', () => {
@@ -59,7 +59,7 @@ describe('prompt', () => {
   })
 
   it('writes initialValue to value', () => {
-    const eventSpy = vi.fn()
+    const eventSpy = mock()
     const instance = new Prompt({
       input,
       output,
@@ -73,7 +73,7 @@ describe('prompt', () => {
   })
 
   it('re-renders on resize', () => {
-    const renderFn = vi.fn().mockImplementation(() => 'foo')
+    const renderFn = mock(() => 'foo')
     const instance = new Prompt({
       input,
       output,
@@ -103,7 +103,7 @@ describe('prompt', () => {
   })
 
   it('emits truthy confirm on y press', () => {
-    const eventFn = vi.fn()
+    const eventFn = mock()
     const instance = new Prompt({
       input,
       output,
@@ -120,7 +120,7 @@ describe('prompt', () => {
   })
 
   it('emits falsey confirm on n press', () => {
-    const eventFn = vi.fn()
+    const eventFn = mock()
     const instance = new Prompt({
       input,
       output,
@@ -168,7 +168,7 @@ describe('prompt', () => {
   })
 
   it('emits key event for unknown chars', () => {
-    const eventSpy = vi.fn()
+    const eventSpy = mock()
     const instance = new Prompt({
       input,
       output,
@@ -186,7 +186,7 @@ describe('prompt', () => {
 
   it('emits cursor events for movement keys', () => {
     const keys = ['up', 'down', 'left', 'right']
-    const eventSpy = vi.fn()
+    const eventSpy = mock()
     const instance = new Prompt({
       input,
       output,
@@ -210,7 +210,7 @@ describe('prompt', () => {
       ['h', 'left'],
       ['l', 'right'],
     ]
-    const eventSpy = vi.fn()
+    const eventSpy = mock()
     const instance = new Prompt(
       {
         input,

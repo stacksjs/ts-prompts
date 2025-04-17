@@ -1,8 +1,8 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'bun:test'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock, setSystemTime, spyOn } from 'bun:test'
 import { EventEmitter, Readable, Writable } from 'node:stream'
 import colors from 'picocolors'
-import { settings } from '../src/runtimes/utils/settings'
 import * as prompts from '../src/prompts'
+import { settings } from '../src/runtimes/utils/settings'
 
 // TODO (43081j): move this into a util?
 class MockWritable extends Writable {
@@ -59,7 +59,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    mock.restore()
   })
 
   afterAll(() => {
@@ -68,11 +68,12 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
   describe('spinner', () => {
     beforeEach(() => {
-      vi.useFakeTimers()
+      setSystemTime(new Date())
     })
 
     afterEach(() => {
-      vi.useRealTimers()
+      setSystemTime()
+      mock.restore()
     })
 
     it('returns spinner API', () => {
@@ -91,7 +92,8 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         // there are 4 frames
         for (let i = 0; i < 4; i++) {
-          vi.advanceTimersByTime(80)
+          const currentTime = new Date().getTime()
+          setSystemTime(new Date(currentTime + 80))
         }
 
         expect(output.buffer).toMatchSnapshot()
@@ -102,7 +104,8 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         result.start('foo')
 
-        vi.advanceTimersByTime(80)
+        const currentTime = new Date().getTime()
+        setSystemTime(new Date(currentTime + 80))
 
         expect(output.buffer).toMatchSnapshot()
       })
@@ -112,7 +115,8 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         result.start()
 
-        vi.advanceTimersByTime(80)
+        const currentTime = new Date().getTime()
+        setSystemTime(new Date(currentTime + 80))
 
         expect(output.buffer).toMatchSnapshot()
       })
@@ -124,11 +128,13 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         result.start()
 
-        vi.advanceTimersByTime(80)
+        const currentTime2 = new Date().getTime()
+        setSystemTime(new Date(currentTime2 + 80))
 
         result.stop()
 
-        vi.advanceTimersByTime(80)
+        const currentTime4 = new Date().getTime()
+        setSystemTime(new Date(currentTime4 + 80))
 
         expect(output.buffer).toMatchSnapshot()
       })
@@ -138,7 +144,8 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         result.start()
 
-        vi.advanceTimersByTime(80)
+        const currentTime5 = new Date().getTime()
+        setSystemTime(new Date(currentTime5 + 80))
 
         result.stop('', 1)
 
@@ -150,7 +157,8 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         result.start()
 
-        vi.advanceTimersByTime(80)
+        const currentTime6 = new Date().getTime()
+        setSystemTime(new Date(currentTime6 + 80))
 
         result.stop('', 2)
 
@@ -162,9 +170,13 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         result.start()
 
-        vi.advanceTimersByTime(80)
+        const currentTime7 = new Date().getTime()
+        setSystemTime(new Date(currentTime7 + 80))
 
         result.stop('foo')
+
+        const currentTime9 = new Date().getTime()
+        setSystemTime(new Date(currentTime9 + 80))
 
         expect(output.buffer).toMatchSnapshot()
       })
@@ -176,11 +188,13 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
         result.start()
 
-        vi.advanceTimersByTime(80)
+        const currentTime8 = new Date().getTime()
+        setSystemTime(new Date(currentTime8 + 80))
 
         result.message('foo')
 
-        vi.advanceTimersByTime(80)
+        const currentTime9 = new Date().getTime()
+        setSystemTime(new Date(currentTime9 + 80))
 
         expect(output.buffer).toMatchSnapshot()
       })
@@ -193,11 +207,11 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
         processEmitter = new EventEmitter()
 
         // Spy on process methods
-        vi.spyOn(process, 'on').mockImplementation((ev: string, listener: (...args: any[]) => void) => {
+        spyOn(process, 'on').mockImplementation((ev: string, listener: (...args: any[]) => void) => {
           processEmitter.on(ev, listener)
           return process
         })
-        vi.spyOn(process, 'removeListener').mockImplementation((ev: string, listener: (...args: any[]) => void) => {
+        spyOn(process, 'removeListener').mockImplementation((ev: string, listener: (...args: any[]) => void) => {
           processEmitter.removeListener(ev, listener)
           return process
         })
@@ -205,6 +219,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       afterEach(() => {
         processEmitter.removeAllListeners()
+        mock.restore()
       })
 
       it('uses default cancel message', () => {

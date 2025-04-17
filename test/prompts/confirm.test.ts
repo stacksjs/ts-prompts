@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
 import ConfirmPrompt from '../../src/prompts/confirm'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
@@ -14,7 +14,7 @@ describe('confirmPrompt', () => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    mock.restore()
   })
 
   it('renders render() result', () => {

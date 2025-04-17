@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import SelectPrompt from '../../src/prompts/select'
 import { cursor } from '../../src/utils'
 import { MockReadable } from '../mock-readable'
@@ -14,7 +14,7 @@ describe('selectPrompt', () => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    mock.restore()
   })
 
   it('renders render() result', () => {
