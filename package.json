@@ -1,5 +1,5 @@
 {
-  "name": "clapp",
+  "name": "@stacksjs/clapp",
   "type": "module",
   "version": "0.0.1",
   "description": "A toolkit for building CLI prompts in TypeScript.",
