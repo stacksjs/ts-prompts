@@ -99,7 +99,7 @@ describe('prompt', () => {
 
     instance.prompt()
 
-    expect(instance.state).to.equal('active')
+    expect(instance.state).toEqual('active')
   })
 
   it('emits truthy confirm on y press', () => {
