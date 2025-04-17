@@ -382,6 +382,36 @@ describe('Binary Tests', () => {
 })
 ```
 
+### Testing Without Building
+
+You can test your CLI application locally without building a binary by creating a simple executable script:
+
+```bash
+#!/usr/bin/env bun
+import('./bin/cli')
+```
+
+Save this as an executable file (e.g., `mycli`) in your project root, then:
+
+```bash
+# Make it executable
+chmod +x ./mycli
+
+# Run it directly
+./mycli command [options]
+```
+
+This approach lets you quickly test your CLI during development without going through the build process. The script simply imports and runs your CLI's entry point file.
+
+For example, if your CLI entry point is at `./src/index.ts`, your script would be:
+
+```bash
+#!/usr/bin/env bun
+import('./src/index.ts')
+```
+
+This is especially useful during development to test command behavior and output formatting.
+
 ## Troubleshooting Binary Issues
 
 Common issues and solutions:
