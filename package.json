@@ -1,17 +1,17 @@
 {
-  "name": "ts-prompts",
+  "name": "clapp",
   "type": "module",
   "version": "0.0.0",
   "description": "A toolkit for building CLI prompts in TypeScript.",
   "author": "Chris Breuer <chris@stacksjs.org>",
   "license": "MIT",
-  "homepage": "https://github.com/stacksjs/ts-prompts#readme",
+  "homepage": "https://github.com/stacksjs/clapp#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stacksjs/ts-prompts.git"
+    "url": "git+https://github.com/stacksjs/clapp.git"
   },
   "bugs": {
-    "url": "https://github.com/stacksjs/ts-prompts/issues"
+    "url": "https://github.com/stacksjs/clapp/issues"
   },
   "keywords": ["cli", "prompts", "toolkit", "typescript", "stacks"],
   "exports": {

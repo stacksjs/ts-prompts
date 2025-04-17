@@ -12,7 +12,7 @@ export * from './string'
 
 const isWindows = platform.startsWith('win')
 
-export const CANCEL_SYMBOL: symbol = Symbol('clack:cancel')
+export const CANCEL_SYMBOL: symbol = Symbol('clapp:cancel')
 
 export function isCancel(value: unknown): value is symbol {
   return value === CANCEL_SYMBOL

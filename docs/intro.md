@@ -4,7 +4,7 @@
 
 > A TypeScript Starter Kit that will help you bootstrap your next project without minimal opinion.
 
-# ts-prompts
+# clapp
 
 This is an opinionated TypeScript Starter kit to help kick-start development of your next Bun package.
 
@@ -14,7 +14,7 @@ It's rather simple to get your package development started:
 
 ```bash
 # you may use this GitHub template or the following command:
-bunx degit stacksjs/ts-prompts my-pkg
+bunx degit stacksjs/clapp my-pkg
 cd my-pkg
 
  # if you don't have pnpm installed, run `npm i -g pnpm`
@@ -79,7 +79,7 @@ We would like to extend our thanks to the following sponsors for funding Stacks 
 
 ## License
 
-The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/ts-prompts/tree/main/LICENSE.md) for more information.
+The MIT License (MIT). Please see [LICENSE](https://github.com/stacksjs/clapp/tree/main/LICENSE.md) for more information.
 
 Made with 💙
 

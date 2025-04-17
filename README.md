@@ -6,7 +6,7 @@
 <!-- [![npm downloads][npm-downloads-src]][npm-downloads-href] -->
 <!-- [![Codecov][codecov-src]][codecov-href] -->
 
-# ts-prompts
+# clapp
 
 This is an opinionated TypeScript Starter kit to help kick-start development of your next Bun package.
 
@@ -31,7 +31,7 @@ It's rather simple to get your package development started:
 
 ```bash
 # you may use this GitHub template or the following command:
-bunx degit stacksjs/ts-prompts my-pkg
+bunx degit stacksjs/clapp my-pkg
 cd my-pkg
 
 bun i # install all deps
@@ -49,10 +49,10 @@ To create a new Stacks.js project using the interactive onboarding process:
 
 ```bash
 # Using npx
-npx ts-prompts create-stacks
+npx clapp create-stacks
 
 # Or after installing globally
-npm install -g ts-prompts
+npm install -g clapp
 stacks-init
 ```
 
@@ -75,7 +75,7 @@ bun test
 
 ## Changelog
 
-Please see our [releases](https://github.com/stackjs/ts-prompts/releases) page for more information on what has changed recently.
+Please see our [releases](https://github.com/stackjs/clapp/releases) page for more information on what has changed recently.
 
 ## Contributing
 
@@ -85,7 +85,7 @@ Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
 
 For help, discussion about best practices, or any other conversation that would benefit from being searchable:
 
-[Discussions on GitHub](https://github.com/stacksjs/ts-prompts/discussions)
+[Discussions on GitHub](https://github.com/stacksjs/clapp/discussions)
 
 For casual chit-chat with others using this package:
 
@@ -111,10 +111,10 @@ The MIT License (MIT). Please see [LICENSE](LICENSE.md) for more information.
 Made with 💙
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/ts-prompts?style=flat-square
-[npm-version-href]: https://npmjs.com/package/ts-prompts
-[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/ts-prompts/ci.yml?style=flat-square&branch=main
-[github-actions-href]: https://github.com/stacksjs/ts-prompts/actions?query=workflow%3Aci
+[npm-version-src]: https://img.shields.io/npm/v/clapp?style=flat-square
+[npm-version-href]: https://npmjs.com/package/clapp
+[github-actions-src]: https://img.shields.io/github/actions/workflow/status/stacksjs/clapp/ci.yml?style=flat-square&branch=main
+[github-actions-href]: https://github.com/stacksjs/clapp/actions?query=workflow%3Aci
 
-<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/ts-prompts/main?style=flat-square
-[codecov-href]: https://codecov.io/gh/stacksjs/ts-prompts -->
+<!-- [codecov-src]: https://img.shields.io/codecov/c/gh/stacksjs/clapp/main?style=flat-square
+[codecov-href]: https://codecov.io/gh/stacksjs/clapp -->
