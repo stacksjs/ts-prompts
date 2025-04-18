@@ -305,7 +305,7 @@ export function spinner(text?: string): Spinner {
         const frame = frames[i = ++i % frames.length]
         const displayText = useDots ? `${currentText}${'.'.repeat(dotCount)}` : currentText
         // Clear the line first to avoid highlighting artifacts
-        process.stdout.write('\r' + ' '.repeat(40) + '\r')
+        process.stdout.write(`\r${' '.repeat(40)}\r`)
         process.stdout.write(`${frame} ${displayText}`)
       }, 80)
 
@@ -314,7 +314,8 @@ export function spinner(text?: string): Spinner {
     stop: (): Spinner => {
       if (interval) {
         clearInterval(interval)
-        if (dotInterval) clearInterval(dotInterval)
+        if (dotInterval)
+          clearInterval(dotInterval)
         process.stdout.write('\r \r')
       }
       return spinnerObj
@@ -322,7 +323,8 @@ export function spinner(text?: string): Spinner {
     succeed: (successText?: string): Spinner => {
       if (interval) {
         clearInterval(interval)
-        if (dotInterval) clearInterval(dotInterval)
+        if (dotInterval)
+          clearInterval(dotInterval)
         process.stdout.write(`\r✓ ${successText || currentText}\n`)
       }
       return spinnerObj
@@ -330,7 +332,8 @@ export function spinner(text?: string): Spinner {
     fail: (failText?: string): Spinner => {
       if (interval) {
         clearInterval(interval)
-        if (dotInterval) clearInterval(dotInterval)
+        if (dotInterval)
+          clearInterval(dotInterval)
         process.stdout.write(`\r✗ ${failText || currentText}\n`)
       }
       return spinnerObj
@@ -350,14 +353,15 @@ export function spinner(text?: string): Spinner {
         dotInterval = setInterval(() => {
           dotCount = (dotCount + 1) % (maxDots + 1)
         }, 500)
-      } else if (!enable && dotInterval) {
+      }
+      else if (!enable && dotInterval) {
         clearInterval(dotInterval)
         dotInterval = null
         dotCount = 0
       }
 
       return spinnerObj
-    }
+    },
   }
 
   return spinnerObj

@@ -1,29 +1,52 @@
-import type { PromptOptions } from './prompt'
-import Prompt from './prompt'
+import type { Option, SelectOptions } from './select'
+import color from 'picocolors'
+import { SelectKeyPrompt } from '../'
+import { S_BAR, S_BAR_END, symbol } from './common'
 
-interface SelectKeyOptions<T extends { value: any }> extends PromptOptions<SelectKeyPrompt<T>> {
-  options: T[]
-}
-export default class SelectKeyPrompt<T extends { value: any }> extends Prompt {
-  options: T[]
-  cursor = 0
-
-  constructor(opts: SelectKeyOptions<T>) {
-    super(opts as unknown as PromptOptions<Prompt>, false)
-
-    this.options = opts.options
-    const keys = this.options.map(({ value: [initial] }) => initial?.toLowerCase())
-    this.cursor = Math.max(keys.indexOf(opts.initialValue), 0)
-
-    this.on('key', (key) => {
-      if (!keys.includes(key))
-        return
-      const value = this.options.find(({ value: [initial] }) => initial?.toLowerCase() === key)
-      if (value) {
-        this.value = value.value
-        this.state = 'submit'
-        this.emit('submit')
-      }
-    })
+export function selectKey<Value extends string>(opts: SelectOptions<Value>) {
+  const opt = (
+    option: Option<Value>,
+    state: 'inactive' | 'active' | 'selected' | 'cancelled' = 'inactive',
+  ) => {
+    const label = option.label ?? String(option.value)
+    if (state === 'selected') {
+      return `${color.dim(label)}`
+    }
+    if (state === 'cancelled') {
+      return `${color.strikethrough(color.dim(label))}`
+    }
+    if (state === 'active') {
+      return `${color.bgCyan(color.gray(` ${option.value} `))} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''
+      }`
+    }
+    return `${color.gray(color.bgWhite(color.inverse(` ${option.value} `)))} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''
+    }`
   }
+
+  return new SelectKeyPrompt({
+    options: opts.options,
+    input: opts.input,
+    output: opts.output,
+    initialValue: opts.initialValue,
+    render() {
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
+
+      switch (this.state) {
+        case 'submit':
+          return `${title}${color.gray(S_BAR)}  ${opt(
+            this.options.find((opt: Option<Value>) => opt.value === this.value) ?? opts.options[0],
+            'selected',
+          )}`
+        case 'cancel':
+          return `${title}${color.gray(S_BAR)}  ${opt(this.options[0], 'cancelled')}\n${color.gray(
+            S_BAR,
+          )}`
+        default: {
+          return `${title}${color.cyan(S_BAR)}  ${this.options
+            .map((option: Option<Value>, i: number) => opt(option, i === this.cursor ? 'active' : 'inactive'))
+            .join(`\n${color.cyan(S_BAR)}  `)}\n${color.cyan(S_BAR_END)}\n`
+        }
+      }
+    },
+  }).prompt() as Promise<Value | symbol>
 }

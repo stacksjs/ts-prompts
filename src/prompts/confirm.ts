@@ -1,38 +1,51 @@
-import type { PromptOptions } from './prompt'
-import { cursor } from '../utils'
-import Prompt from './prompt'
+import type { CommonOptions } from './common'
+import color from 'picocolors'
+import { ConfirmPrompt } from '../'
+import {
 
-interface ConfirmOptions extends PromptOptions<ConfirmPrompt> {
-  active: string
-  inactive: string
+  S_BAR,
+  S_BAR_END,
+  S_RADIO_ACTIVE,
+  S_RADIO_INACTIVE,
+  symbol,
+} from './common'
+
+export interface ConfirmOptions extends CommonOptions {
+  message: string
+  active?: string
+  inactive?: string
   initialValue?: boolean
 }
-export default class ConfirmPrompt extends Prompt {
-  get cursor(): number {
-    return this.value ? 0 : 1
-  }
+export function confirm(opts: ConfirmOptions) {
+  const active = opts.active ?? 'Yes'
+  const inactive = opts.inactive ?? 'No'
+  return new ConfirmPrompt({
+    active,
+    inactive,
+    input: opts.input,
+    output: opts.output,
+    initialValue: opts.initialValue ?? true,
+    render() {
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
+      const value = this.value ? active : inactive
 
-  private get _value() {
-    return this.cursor === 0
-  }
-
-  constructor(opts: ConfirmOptions) {
-    super(opts as unknown as PromptOptions<Prompt>, false)
-    this.value = !!opts.initialValue
-
-    this.on('value', () => {
-      this.value = this._value
-    })
-
-    this.on('confirm', (confirm) => {
-      this.output.write(cursor.move(0, -1))
-      this.value = confirm
-      this.state = 'submit'
-      this.close()
-    })
-
-    this.on('cursor', () => {
-      this.value = !this.value
-    })
-  }
+      switch (this.state) {
+        case 'submit':
+          return `${title}${color.gray(S_BAR)}  ${color.dim(value)}`
+        case 'cancel':
+          return `${title}${color.gray(S_BAR)}  ${color.strikethrough(
+            color.dim(value),
+          )}\n${color.gray(S_BAR)}`
+        default: {
+          return `${title}${color.cyan(S_BAR)}  ${this.value
+            ? `${color.green(S_RADIO_ACTIVE)} ${active}`
+            : `${color.dim(S_RADIO_INACTIVE)} ${color.dim(active)}`
+          } ${color.dim('/')} ${!this.value
+            ? `${color.green(S_RADIO_ACTIVE)} ${inactive}`
+            : `${color.dim(S_RADIO_INACTIVE)} ${color.dim(inactive)}`
+          }\n${color.cyan(S_BAR_END)}\n`
+        }
+      }
+    },
+  }).prompt() as Promise<boolean | symbol>
 }

@@ -1,97 +1,138 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-import ConfirmPrompt from '../../src/prompts/confirm'
-import { cursor } from '../../src/utils'
-import { MockReadable } from '../mock-readable'
-import { MockWritable } from '../mock-writable'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test';
+import * as prompts from '../../src';
+import { MockReadable, MockWritable } from '../utils';
 
-describe('confirmPrompt', () => {
-  let input: MockReadable
-  let output: MockWritable
+describe.each(['true', 'false'])('confirm (isCI = %s)', (isCI) => {
+	let originalCI: string | undefined;
+	let output: MockWritable;
+	let input: MockReadable;
 
-  beforeEach(() => {
-    input = new MockReadable()
-    output = new MockWritable()
-  })
+	beforeAll(() => {
+		originalCI = process.env.CI;
+		process.env.CI = isCI;
+	});
 
-  afterEach(() => {
-    mock.restore()
-  })
+	afterAll(() => {
+		process.env.CI = originalCI;
+	});
 
-  it('renders render() result', () => {
-    const instance = new ConfirmPrompt({
-      input,
-      output,
-      render: () => 'foo',
-      active: 'yes',
-      inactive: 'no',
-    })
-    instance.prompt()
-    expect(output.buffer).toEqual([cursor.hide, 'foo'])
-  })
+	beforeEach(() => {
+		output = new MockWritable();
+		input = new MockReadable();
+	});
 
-  it('sets value and submits on confirm (y)', () => {
-    const instance = new ConfirmPrompt({
-      input,
-      output,
-      render: () => 'foo',
-      active: 'yes',
-      inactive: 'no',
-      initialValue: true,
-    })
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
 
-    instance.prompt()
-    input.emit('keypress', 'y', { name: 'y' })
+	test('renders message with choices', async () => {
+		const result = prompts.confirm({
+			message: 'foo',
+			input,
+			output,
+		});
 
-    expect(instance.value).toEqual(true)
-    expect(instance.state).toEqual('submit')
-  })
+		input.emit('keypress', '', { name: 'return' });
 
-  it('sets value and submits on confirm (n)', () => {
-    const instance = new ConfirmPrompt({
-      input,
-      output,
-      render: () => 'foo',
-      active: 'yes',
-      inactive: 'no',
-      initialValue: true,
-    })
+		const value = await result;
 
-    instance.prompt()
-    input.emit('keypress', 'n', { name: 'n' })
+		expect(value).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
 
-    expect(instance.value).toEqual(false)
-    expect(instance.state).toEqual('submit')
-  })
+	test('renders custom active choice', async () => {
+		const result = prompts.confirm({
+			message: 'foo',
+			active: 'bleep',
+			input,
+			output,
+		});
 
-  describe('cursor', () => {
-    it('cursor is 1 when inactive', () => {
-      const instance = new ConfirmPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        active: 'yes',
-        inactive: 'no',
-        initialValue: false,
-      })
+		input.emit('keypress', '', { name: 'return' });
 
-      instance.prompt()
-      input.emit('keypress', '', { name: 'return' })
-      expect(instance.cursor).toEqual(1)
-    })
+		const value = await result;
 
-    it('cursor is 0 when active', () => {
-      const instance = new ConfirmPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        active: 'yes',
-        inactive: 'no',
-        initialValue: true,
-      })
+		expect(value).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
 
-      instance.prompt()
-      input.emit('keypress', '', { name: 'return' })
-      expect(instance.cursor).toEqual(0)
-    })
-  })
-})
+	test('renders custom inactive choice', async () => {
+		const result = prompts.confirm({
+			message: 'foo',
+			inactive: 'bleep',
+			input,
+			output,
+		});
+
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('right arrow moves to next choice', async () => {
+		const result = prompts.confirm({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'right', { name: 'right' });
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe(false);
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('left arrow moves to previous choice', async () => {
+		const result = prompts.confirm({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'right', { name: 'right' });
+		input.emit('keypress', 'left', { name: 'left' });
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('can cancel', async () => {
+		const result = prompts.confirm({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'escape', { name: 'escape' });
+
+		const value = await result;
+
+		expect(prompts.isCancel(value)).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('can set initialValue', async () => {
+		const result = prompts.confirm({
+			message: 'foo',
+			initialValue: false,
+			input,
+			output,
+		});
+
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe(false);
+		expect(output.buffer).toMatchSnapshot();
+	});
+});

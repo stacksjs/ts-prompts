@@ -1,61 +1,126 @@
-import type { PromptOptions } from './prompt'
-import Prompt from './prompt'
+import type { CommonOptions } from './common'
+import type { Option } from './select'
+import color from 'picocolors'
+import { MultiSelectPrompt } from '../'
+import {
 
-interface MultiSelectOptions<T extends { value: any }> extends PromptOptions<MultiSelectPrompt<T>> {
-  options: T[]
-  initialValues?: T['value'][]
+  S_BAR,
+  S_BAR_END,
+  S_CHECKBOX_ACTIVE,
+  S_CHECKBOX_INACTIVE,
+  S_CHECKBOX_SELECTED,
+  symbol,
+} from './common'
+import { limitOptions } from './limit-options'
+
+export interface MultiSelectOptions<Value> extends CommonOptions {
+  message: string
+  options: Option<Value>[]
+  initialValues?: Value[]
+  maxItems?: number
   required?: boolean
-  cursorAt?: T['value']
+  cursorAt?: Value
 }
-export default class MultiSelectPrompt<T extends { value: any }> extends Prompt {
-  options: T[]
-  cursor = 0
-
-  private get _value() {
-    return this.options[this.cursor].value
+export function multiselect<Value>(opts: MultiSelectOptions<Value>) {
+  const opt = (
+    option: Option<Value>,
+    state: 'inactive' | 'active' | 'selected' | 'active-selected' | 'submitted' | 'cancelled',
+  ) => {
+    const label = option.label ?? String(option.value)
+    if (state === 'active') {
+      return `${color.cyan(S_CHECKBOX_ACTIVE)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''
+      }`
+    }
+    if (state === 'selected') {
+      return `${color.green(S_CHECKBOX_SELECTED)} ${color.dim(label)} ${option.hint ? color.dim(`(${option.hint})`) : ''
+      }`
+    }
+    if (state === 'cancelled') {
+      return `${color.strikethrough(color.dim(label))}`
+    }
+    if (state === 'active-selected') {
+      return `${color.green(S_CHECKBOX_SELECTED)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''
+      }`
+    }
+    if (state === 'submitted') {
+      return `${color.dim(label)}`
+    }
+    return `${color.dim(S_CHECKBOX_INACTIVE)} ${color.dim(label)}`
   }
 
-  private toggleAll() {
-    const allSelected = this.value.length === this.options.length
-    this.value = allSelected ? [] : this.options.map(v => v.value)
-  }
-
-  private toggleValue() {
-    const selected = this.value.includes(this._value)
-    this.value = selected
-      ? this.value.filter((value: T['value']) => value !== this._value)
-      : [...this.value, this._value]
-  }
-
-  constructor(opts: MultiSelectOptions<T>) {
-    super(opts as unknown as PromptOptions<Prompt>, false)
-
-    this.options = opts.options
-    this.value = [...(opts.initialValues ?? [])]
-    this.cursor = Math.max(
-      this.options.findIndex(({ value }) => value === opts.cursorAt),
-      0,
-    )
-    this.on('key', (char) => {
-      if (char === 'a') {
-        this.toggleAll()
+  return new MultiSelectPrompt({
+    options: opts.options,
+    input: opts.input,
+    output: opts.output,
+    initialValues: opts.initialValues,
+    required: opts.required ?? true,
+    cursorAt: opts.cursorAt,
+    validate(selected: Value[]) {
+      if (this.required && selected.length === 0) {
+        return `Please select at least one option.\n${color.reset(
+          color.dim(
+            `Press ${color.gray(color.bgWhite(color.inverse(' space ')))} to select, ${color.gray(
+              color.bgWhite(color.inverse(' enter ')),
+            )} to submit`,
+          ),
+        )}`
       }
-    })
+    },
+    render() {
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
 
-    this.on('cursor', (key) => {
-      switch (key) {
-        case 'left':
-        case 'up':
-          this.cursor = this.cursor === 0 ? this.options.length - 1 : this.cursor - 1
-          break
-        case 'down':
-        case 'right':
-          this.cursor = this.cursor === this.options.length - 1 ? 0 : this.cursor + 1
-          break
-        case 'space':
-          this.toggleValue()
-          break
+      const styleOption = (option: Option<Value>, active: boolean) => {
+        const selected = this.value.includes(option.value)
+        if (active && selected) {
+          return opt(option, 'active-selected')
+        }
+        if (selected) {
+          return opt(option, 'selected')
+        }
+        return opt(option, active ? 'active' : 'inactive')
       }
-    })
-  }
+
+      switch (this.state) {
+        case 'submit': {
+          return `${title}${color.gray(S_BAR)}  ${this.options
+            .filter(({ value }) => this.value.includes(value))
+            .map(option => opt(option, 'submitted'))
+            .join(color.dim(', ')) || color.dim('none')
+          }`
+        }
+        case 'cancel': {
+          const label = this.options
+            .filter(({ value }) => this.value.includes(value))
+            .map(option => opt(option, 'cancelled'))
+            .join(color.dim(', '))
+          return `${title}${color.gray(S_BAR)}  ${label.trim() ? `${label}\n${color.gray(S_BAR)}` : ''
+          }`
+        }
+        case 'error': {
+          const footer = this.error
+            .split('\n')
+            .map((ln: string, i: number) =>
+              i === 0 ? `${color.yellow(S_BAR_END)}  ${color.yellow(ln)}` : `   ${ln}`,
+            )
+            .join('\n')
+          return `${title + color.yellow(S_BAR)}  ${limitOptions({
+            output: opts.output,
+            options: this.options,
+            cursor: this.cursor,
+            maxItems: opts.maxItems,
+            style: styleOption,
+          }).join(`\n${color.yellow(S_BAR)}  `)}\n${footer}\n`
+        }
+        default: {
+          return `${title}${color.cyan(S_BAR)}  ${limitOptions({
+            output: opts.output,
+            options: this.options,
+            cursor: this.cursor,
+            maxItems: opts.maxItems,
+            style: styleOption,
+          }).join(`\n${color.cyan(S_BAR)}  `)}\n${color.cyan(S_BAR_END)}\n`
+        }
+      }
+    },
+  }).prompt() as Promise<Value[] | symbol>
 }

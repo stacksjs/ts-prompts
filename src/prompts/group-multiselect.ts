@@ -1,89 +1,170 @@
-import type { PromptOptions } from './prompt'
-import Prompt from './prompt'
+import type { CommonOptions } from './common'
+import type { Option } from './select'
+import color from 'picocolors'
+import { GroupMultiSelectPrompt } from '../'
+import {
 
-interface GroupMultiSelectOptions<T extends { value: any }>
-  extends PromptOptions<GroupMultiSelectPrompt<T>> {
-  options: Record<string, T[]>
-  initialValues?: T['value'][]
+  S_BAR,
+  S_BAR_END,
+  S_CHECKBOX_ACTIVE,
+  S_CHECKBOX_INACTIVE,
+  S_CHECKBOX_SELECTED,
+  symbol,
+} from './common'
+
+export interface GroupMultiSelectOptions<Value> extends CommonOptions {
+  message: string
+  options: Record<string, Option<Value>[]>
+  initialValues?: Value[]
   required?: boolean
-  cursorAt?: T['value']
+  cursorAt?: Value
   selectableGroups?: boolean
+  groupSpacing?: number
 }
-export default class GroupMultiSelectPrompt<T extends { value: any }> extends Prompt {
-  options: (T & { group: string | boolean })[]
-  cursor = 0
-  #selectableGroups: boolean
+export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
+  const { selectableGroups = true, groupSpacing = 0 } = opts
+  const opt = (
+    option: Option<Value>,
+    state:
+      | 'inactive'
+      | 'active'
+      | 'selected'
+      | 'active-selected'
+      | 'group-active'
+      | 'group-active-selected'
+      | 'submitted'
+      | 'cancelled',
+    options: Option<Value>[] = [],
+  ) => {
+    const label = option.label ?? String(option.value)
+    const isItem = typeof (option as any).group === 'string'
+    const next = isItem && (options[options.indexOf(option) + 1] ?? { group: true })
+    const isLast = isItem && (next as any).group === true
+    const prefix = isItem ? (selectableGroups ? `${isLast ? S_BAR_END : S_BAR} ` : '  ') : ''
+    const spacingPrefix
+      = groupSpacing > 0 && !isItem ? `\n${color.cyan(S_BAR)}  `.repeat(groupSpacing) : ''
 
-  getGroupItems(group: string): T[] {
-    return this.options.filter(o => o.group === group)
-  }
-
-  isGroupSelected(group: string): boolean {
-    const items = this.getGroupItems(group)
-    return items.every(i => this.value.includes(i.value))
-  }
-
-  private toggleValue() {
-    const item = this.options[this.cursor]
-    if (item.group === true) {
-      const group = item.value
-      const groupedItems = this.getGroupItems(group)
-      if (this.isGroupSelected(group)) {
-        this.value = this.value.filter(
-          (v: string) => groupedItems.findIndex(i => i.value === v) === -1,
-        )
-      }
-      else {
-        this.value = [...this.value, ...groupedItems.map(i => i.value)]
-      }
-      this.value = Array.from(new Set(this.value))
+    if (state === 'active') {
+      return `${spacingPrefix}${color.dim(prefix)}${color.cyan(S_CHECKBOX_ACTIVE)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''
+      }`
     }
-    else {
-      const selected = this.value.includes(item.value)
-      this.value = selected
-        ? this.value.filter((v: T['value']) => v !== item.value)
-        : [...this.value, item.value]
+    if (state === 'group-active') {
+      return `${spacingPrefix}${prefix}${color.cyan(S_CHECKBOX_ACTIVE)} ${color.dim(label)}`
     }
+    if (state === 'group-active-selected') {
+      return `${spacingPrefix}${prefix}${color.green(S_CHECKBOX_SELECTED)} ${color.dim(label)}`
+    }
+    if (state === 'selected') {
+      const selectedCheckbox = isItem || selectableGroups ? color.green(S_CHECKBOX_SELECTED) : ''
+      return `${spacingPrefix}${color.dim(prefix)}${selectedCheckbox} ${color.dim(label)} ${option.hint ? color.dim(`(${option.hint})`) : ''
+      }`
+    }
+    if (state === 'cancelled') {
+      return `${color.strikethrough(color.dim(label))}`
+    }
+    if (state === 'active-selected') {
+      return `${spacingPrefix}${color.dim(prefix)}${color.green(S_CHECKBOX_SELECTED)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''
+      }`
+    }
+    if (state === 'submitted') {
+      return `${color.dim(label)}`
+    }
+    const unselectedCheckbox = isItem || selectableGroups ? color.dim(S_CHECKBOX_INACTIVE) : ''
+    return `${spacingPrefix}${color.dim(prefix)}${unselectedCheckbox} ${color.dim(label)}`
   }
 
-  constructor(opts: GroupMultiSelectOptions<T>) {
-    super(opts as unknown as PromptOptions<Prompt>, false)
-    const { options } = opts
-    this.#selectableGroups = opts.selectableGroups !== false
-    this.options = Object.entries(options).flatMap(([key, option]) => [
-      { value: key, group: true, label: key },
-      ...option.map(opt => ({ ...opt, group: key })),
-    ]) as any
-    this.value = [...(opts.initialValues ?? [])]
-    this.cursor = Math.max(
-      this.options.findIndex(({ value }) => value === opts.cursorAt),
-      this.#selectableGroups ? 0 : 1,
-    )
-
-    this.on('cursor', (key) => {
-      switch (key) {
-        case 'left':
-        case 'up': {
-          this.cursor = this.cursor === 0 ? this.options.length - 1 : this.cursor - 1
-          const currentIsGroup = this.options[this.cursor]?.group === true
-          if (!this.#selectableGroups && currentIsGroup) {
-            this.cursor = this.cursor === 0 ? this.options.length - 1 : this.cursor - 1
-          }
-          break
-        }
-        case 'down':
-        case 'right': {
-          this.cursor = this.cursor === this.options.length - 1 ? 0 : this.cursor + 1
-          const currentIsGroup = this.options[this.cursor]?.group === true
-          if (!this.#selectableGroups && currentIsGroup) {
-            this.cursor = this.cursor === this.options.length - 1 ? 0 : this.cursor + 1
-          }
-          break
-        }
-        case 'space':
-          this.toggleValue()
-          break
+  return new GroupMultiSelectPrompt({
+    options: opts.options,
+    input: opts.input,
+    output: opts.output,
+    initialValues: opts.initialValues,
+    required: opts.required ?? true,
+    cursorAt: opts.cursorAt,
+    selectableGroups,
+    validate(selected: Value[]) {
+      if (this.required && selected.length === 0) {
+        return `Please select at least one option.\n${color.reset(
+          color.dim(
+            `Press ${color.gray(color.bgWhite(color.inverse(' space ')))} to select, ${color.gray(
+              color.bgWhite(color.inverse(' enter ')),
+            )} to submit`,
+          ),
+        )}`
       }
-    })
-  }
+    },
+    render() {
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
+
+      switch (this.state) {
+        case 'submit': {
+          return `${title}${color.gray(S_BAR)}  ${this.options
+            .filter(({ value }) => this.value.includes(value))
+            .map(option => opt(option, 'submitted'))
+            .join(color.dim(', '))}`
+        }
+        case 'cancel': {
+          const label = this.options
+            .filter(({ value }) => this.value.includes(value))
+            .map(option => opt(option, 'cancelled'))
+            .join(color.dim(', '))
+          return `${title}${color.gray(S_BAR)}  ${label.trim() ? `${label}\n${color.gray(S_BAR)}` : ''
+          }`
+        }
+        case 'error': {
+          const footer = this.error
+            .split('\n')
+            .map((ln, i) =>
+              i === 0 ? `${color.yellow(S_BAR_END)}  ${color.yellow(ln)}` : `   ${ln}`,
+            )
+            .join('\n')
+          return `${title}${color.yellow(S_BAR)}  ${this.options
+            .map((option, i, options) => {
+              const selected
+                = this.value.includes(option.value)
+                  || (option.group === true && this.isGroupSelected(`${option.value}`))
+              const active = i === this.cursor
+              const groupActive
+                = !active
+                  && typeof option.group === 'string'
+                  && this.options[this.cursor].value === option.group
+              if (groupActive) {
+                return opt(option, selected ? 'group-active-selected' : 'group-active', options)
+              }
+              if (active && selected) {
+                return opt(option, 'active-selected', options)
+              }
+              if (selected) {
+                return opt(option, 'selected', options)
+              }
+              return opt(option, active ? 'active' : 'inactive', options)
+            })
+            .join(`\n${color.yellow(S_BAR)}  `)}\n${footer}\n`
+        }
+        default: {
+          return `${title}${color.cyan(S_BAR)}  ${this.options
+            .map((option, i, options) => {
+              const selected
+                = this.value.includes(option.value)
+                  || (option.group === true && this.isGroupSelected(`${option.value}`))
+              const active = i === this.cursor
+              const groupActive
+                = !active
+                  && typeof option.group === 'string'
+                  && this.options[this.cursor].value === option.group
+              if (groupActive) {
+                return opt(option, selected ? 'group-active-selected' : 'group-active', options)
+              }
+              if (active && selected) {
+                return opt(option, 'active-selected', options)
+              }
+              if (selected) {
+                return opt(option, 'selected', options)
+              }
+              return opt(option, active ? 'active' : 'inactive', options)
+            })
+            .join(`\n${color.cyan(S_BAR)}  `)}\n${color.cyan(S_BAR_END)}\n`
+        }
+      }
+    },
+  }).prompt() as Promise<Value[] | symbol>
 }

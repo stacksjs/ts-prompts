@@ -4,7 +4,7 @@ import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import process from 'node:process'
-import { MockReadable } from '../test/mock-readable'
+import { MockReadable } from '../test/utils'
 import { MockWritable } from '../test/mock-writable'
 import { cli } from './CLI'
 

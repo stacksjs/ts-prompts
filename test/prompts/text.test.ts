@@ -1,114 +1,177 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-import color from 'picocolors'
-import TextPrompt from '../../src/prompts/text'
-import { cursor } from '../../src/utils'
-import { MockReadable } from '../mock-readable'
-import { MockWritable } from '../mock-writable'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test';
+import * as prompts from '../../src';
+import { MockReadable, MockWritable } from '../utils';
 
-describe('textPrompt', () => {
-  let input: MockReadable
-  let output: MockWritable
+describe.each(['true', 'false'])('text (isCI = %s)', (isCI) => {
+	let originalCI: string | undefined;
+	let output: MockWritable;
+	let input: MockReadable;
 
-  beforeEach(() => {
-    input = new MockReadable()
-    output = new MockWritable()
-  })
+	beforeAll(() => {
+		originalCI = process.env.CI;
+		process.env.CI = isCI;
+	});
 
-  afterEach(() => {
-    mock.restore()
-  })
+	afterAll(() => {
+		process.env.CI = originalCI;
+	});
 
-  it('renders render() result', () => {
-    const instance = new TextPrompt({
-      input,
-      output,
-      render: () => 'foo',
-    })
-    // leave the promise hanging since we don't want to submit in this test
-    instance.prompt()
-    expect(output.buffer).toEqual([cursor.hide, 'foo'])
-  })
+	beforeEach(() => {
+		output = new MockWritable();
+		input = new MockReadable();
+	});
 
-  it('sets default value on finalize if no value', async () => {
-    const instance = new TextPrompt({
-      input,
-      output,
-      render: () => 'foo',
-      defaultValue: 'bleep bloop',
-    })
-    const resultPromise = instance.prompt()
-    input.emit('keypress', '', { name: 'return' })
-    const result = await resultPromise
-    expect(result).toEqual('bleep bloop')
-  })
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
 
-  it('keeps value on finalize', async () => {
-    const instance = new TextPrompt({
-      input,
-      output,
-      render: () => 'foo',
-      defaultValue: 'bleep bloop',
-    })
-    const resultPromise = instance.prompt()
-    input.emit('keypress', 'x', { name: 'x' })
-    input.emit('keypress', '', { name: 'return' })
-    const result = await resultPromise
-    expect(result).toEqual('x')
-  })
+	test('renders message', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			input,
+			output,
+		});
 
-  describe('cursor', () => {
-    it('can get cursor', () => {
-      const instance = new TextPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
+		input.emit('keypress', '', { name: 'return' });
 
-      expect(instance.cursor).toEqual(0)
-    })
-  })
+		await result;
 
-  describe('valueWithCursor', () => {
-    it('returns value on submit', () => {
-      const instance = new TextPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
-      instance.prompt()
-      input.emit('keypress', 'x', { name: 'x' })
-      input.emit('keypress', '', { name: 'return' })
-      expect(instance.valueWithCursor).toEqual('x')
-    })
+		expect(output.buffer).toMatchSnapshot();
+	});
 
-    it('highlights cursor position', () => {
-      const instance = new TextPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
-      instance.prompt()
-      const keys = 'foo'
-      for (let i = 0; i < keys.length; i++) {
-        input.emit('keypress', keys[i], { name: keys[i] })
-      }
-      input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.valueWithCursor).toEqual(`fo${color.inverse('o')}`)
-    })
+	test('renders placeholder if set', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			placeholder: 'bar',
+			input,
+			output,
+		});
 
-    it('shows cursor at end if beyond value', () => {
-      const instance = new TextPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
-      instance.prompt()
-      const keys = 'foo'
-      for (let i = 0; i < keys.length; i++) {
-        input.emit('keypress', keys[i], { name: keys[i] })
-      }
-      input.emit('keypress', 'right', { name: 'right' })
-      expect(instance.valueWithCursor).toEqual('foo█')
-    })
-  })
-})
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(output.buffer).toMatchSnapshot();
+
+		expect(value).toBe('bar');
+	});
+
+	test('<tab> applies placeholder', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			placeholder: 'bar',
+			input,
+			output,
+		});
+
+		input.emit('keypress', '\t', { name: 'tab' });
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('bar');
+	});
+
+	test('can cancel', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'escape', { name: 'escape' });
+
+		const value = await result;
+
+		expect(prompts.isCancel(value)).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('renders cancelled value if one set', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', 'y', { name: 'y' });
+		input.emit('keypress', '', { name: 'escape' });
+
+		const value = await result;
+
+		expect(prompts.isCancel(value)).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('renders submitted value', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', 'y', { name: 'y' });
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('xy');
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('defaultValue sets the value but does not render', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			defaultValue: 'bar',
+			input,
+			output,
+		});
+
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('bar');
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('validation errors render and clear', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			validate: (val) => (val !== 'xy' ? 'should be xy' : undefined),
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', '', { name: 'return' });
+		input.emit('keypress', 'y', { name: 'y' });
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('xy');
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('validation errors render and clear (using Error)', async () => {
+		const result = prompts.text({
+			message: 'foo',
+			validate: (val) => (val !== 'xy' ? new Error('should be xy') : undefined),
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', '', { name: 'return' });
+		input.emit('keypress', 'y', { name: 'y' });
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('xy');
+		expect(output.buffer).toMatchSnapshot();
+	});
+});

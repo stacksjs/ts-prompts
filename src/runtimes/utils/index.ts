@@ -3,7 +3,7 @@ import type { Key } from 'node:readline'
 import type { Readable, Writable } from 'node:stream'
 import process, { platform, stdin, stdout } from 'node:process'
 import * as readline from 'node:readline'
-import { ReadStream } from 'node:tty'
+import { ReadStream, WriteStream } from 'node:tty'
 import { cursor } from '../../utils'
 import { isActionKey } from './settings'
 
@@ -30,6 +30,14 @@ export interface BlockOptions {
   output?: Writable
   overwrite?: boolean
   hideCursor?: boolean
+}
+
+export function getColumns(output: Writable): number {
+  if (output instanceof WriteStream && output.columns) {
+    return output.columns
+  }
+
+  return 80
 }
 
 export function block({

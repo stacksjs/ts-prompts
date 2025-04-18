@@ -1,104 +1,132 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-import SelectPrompt from '../../src/prompts/select'
-import { cursor } from '../../src/utils'
-import { MockReadable } from '../mock-readable'
-import { MockWritable } from '../mock-writable'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test';
+import * as prompts from '../../src';
+import { MockReadable, MockWritable } from '../utils';
 
-describe('selectPrompt', () => {
-  let input: MockReadable
-  let output: MockWritable
+describe.each(['true', 'false'])('select (isCI = %s)', (isCI) => {
+	let originalCI: string | undefined;
+	let output: MockWritable;
+	let input: MockReadable;
 
-  beforeEach(() => {
-    input = new MockReadable()
-    output = new MockWritable()
-  })
+	beforeAll(() => {
+		originalCI = process.env.CI;
+		process.env.CI = isCI;
+	});
 
-  afterEach(() => {
-    mock.restore()
-  })
+	afterAll(() => {
+		process.env.CI = originalCI;
+	});
 
-  it('renders render() result', () => {
-    const instance = new SelectPrompt({
-      input,
-      output,
-      render: () => 'foo',
-      options: [{ value: 'foo' }, { value: 'bar' }],
-    })
-    instance.prompt()
-    expect(output.buffer).toEqual([cursor.hide, 'foo'])
-  })
+	beforeEach(() => {
+		output = new MockWritable();
+		input = new MockReadable();
+	});
 
-  describe('cursor', () => {
-    it('cursor is index of selected item', () => {
-      const instance = new SelectPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        options: [{ value: 'foo' }, { value: 'bar' }],
-      })
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
 
-      instance.prompt()
+	test('renders options and message', async () => {
+		const result = prompts.select({
+			message: 'foo',
+			options: [{ value: 'opt0' }, { value: 'opt1' }],
+			input,
+			output,
+		});
 
-      expect(instance.cursor).toEqual(0)
-      input.emit('keypress', 'down', { name: 'down' })
-      expect(instance.cursor).toEqual(1)
-    })
+		input.emit('keypress', '', { name: 'return' });
 
-    it('cursor loops around', () => {
-      const instance = new SelectPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        options: [{ value: 'foo' }, { value: 'bar' }, { value: 'baz' }],
-      })
+		const value = await result;
 
-      instance.prompt()
+		expect(value).toBe('opt0');
+		expect(output.buffer).toMatchSnapshot();
+	});
 
-      expect(instance.cursor).toEqual(0)
-      input.emit('keypress', 'up', { name: 'up' })
-      expect(instance.cursor).toEqual(2)
-      input.emit('keypress', 'down', { name: 'down' })
-      expect(instance.cursor).toEqual(0)
-    })
+	test('down arrow selects next option', async () => {
+		const result = prompts.select({
+			message: 'foo',
+			options: [{ value: 'opt0' }, { value: 'opt1' }],
+			input,
+			output,
+		});
 
-    it('left behaves as up', () => {
-      const instance = new SelectPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        options: [{ value: 'foo' }, { value: 'bar' }, { value: 'baz' }],
-      })
+		input.emit('keypress', '', { name: 'down' });
+		input.emit('keypress', '', { name: 'return' });
 
-      instance.prompt()
+		const value = await result;
 
-      input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.cursor).toEqual(2)
-    })
+		expect(value).toBe('opt1');
+		expect(output.buffer).toMatchSnapshot();
+	});
 
-    it('right behaves as down', () => {
-      const instance = new SelectPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        options: [{ value: 'foo' }, { value: 'bar' }],
-      })
+	test('up arrow selects previous option', async () => {
+		const result = prompts.select({
+			message: 'foo',
+			options: [{ value: 'opt0' }, { value: 'opt1' }],
+			input,
+			output,
+		});
 
-      instance.prompt()
+		input.emit('keypress', '', { name: 'down' });
+		input.emit('keypress', '', { name: 'up' });
+		input.emit('keypress', '', { name: 'return' });
 
-      input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.cursor).toEqual(1)
-    })
+		const value = await result;
 
-    it('initial value is selected', () => {
-      const instance = new SelectPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        options: [{ value: 'foo' }, { value: 'bar' }],
-        initialValue: 'bar',
-      })
-      instance.prompt()
-      expect(instance.cursor).toEqual(1)
-    })
-  })
-})
+		expect(value).toBe('opt0');
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('can cancel', async () => {
+		const result = prompts.select({
+			message: 'foo',
+			options: [{ value: 'opt0' }, { value: 'opt1' }],
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'escape', { name: 'escape' });
+
+		const value = await result;
+
+		expect(prompts.isCancel(value)).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('renders option labels', async () => {
+		const result = prompts.select({
+			message: 'foo',
+			options: [
+				{ value: 'opt0', label: 'Option 0' },
+				{ value: 'opt1', label: 'Option 1' },
+			],
+			input,
+			output,
+		});
+
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('opt0');
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('renders option hints', async () => {
+		const result = prompts.select({
+			message: 'foo',
+			options: [
+				{ value: 'opt0', hint: 'Hint 0' },
+				{ value: 'opt1', hint: 'Hint 1' },
+			],
+			input,
+			output,
+		});
+
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('opt0');
+		expect(output.buffer).toMatchSnapshot();
+	});
+});

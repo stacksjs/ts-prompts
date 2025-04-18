@@ -1,98 +1,115 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test'
-import color from 'picocolors'
-import PasswordPrompt from '../../src/prompts/password'
-import { cursor } from '../../src/utils'
-import { MockReadable } from '../mock-readable'
-import { MockWritable } from '../mock-writable'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test';
+import * as prompts from '../../src';
+import { MockReadable, MockWritable } from '../utils';
 
-describe('passwordPrompt', () => {
-  let input: MockReadable
-  let output: MockWritable
+describe.each(['true', 'false'])('password (isCI = %s)', (isCI) => {
+	let originalCI: string | undefined;
+	let output: MockWritable;
+	let input: MockReadable;
 
-  beforeEach(() => {
-    input = new MockReadable()
-    output = new MockWritable()
-  })
+	beforeAll(() => {
+		originalCI = process.env.CI;
+		process.env.CI = isCI;
+	});
 
-  afterEach(() => {
-    mock.restore()
-  })
+	afterAll(() => {
+		process.env.CI = originalCI;
+	});
 
-  it('renders render() result', () => {
-    const instance = new PasswordPrompt({
-      input,
-      output,
-      render: () => 'foo',
-    })
-    // leave the promise hanging since we don't want to submit in this test
-    instance.prompt()
-    expect(output.buffer).toEqual([cursor.hide, 'foo'])
-  })
+	beforeEach(() => {
+		output = new MockWritable();
+		input = new MockReadable();
+	});
 
-  describe('cursor', () => {
-    it('can get cursor', () => {
-      const instance = new PasswordPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
 
-      expect(instance.cursor).toEqual(0)
-    })
-  })
+	test('renders message', async () => {
+		const result = prompts.password({
+			message: 'foo',
+			input,
+			output,
+		});
 
-  describe('valueWithCursor', () => {
-    it('returns masked value on submit', () => {
-      const instance = new PasswordPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
-      instance.prompt()
-      const keys = 'foo'
-      for (let i = 0; i < keys.length; i++) {
-        input.emit('keypress', keys[i], { name: keys[i] })
-      }
-      input.emit('keypress', '', { name: 'return' })
-      expect(instance.valueWithCursor).toEqual('•••')
-    })
+		input.emit('keypress', '', { name: 'return' });
 
-    it('renders marker at end', () => {
-      const instance = new PasswordPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
-      instance.prompt()
-      input.emit('keypress', 'x', { name: 'x' })
-      expect(instance.valueWithCursor).toEqual(`•${color.inverse(color.hidden('_'))}`)
-    })
+		await result;
 
-    it('renders cursor inside value', () => {
-      const instance = new PasswordPrompt({
-        input,
-        output,
-        render: () => 'foo',
-      })
-      instance.prompt()
-      input.emit('keypress', 'x', { name: 'x' })
-      input.emit('keypress', 'y', { name: 'y' })
-      input.emit('keypress', 'z', { name: 'z' })
-      input.emit('keypress', 'left', { name: 'left' })
-      input.emit('keypress', 'left', { name: 'left' })
-      expect(instance.valueWithCursor).toEqual(`•${color.inverse('•')}•`)
-    })
+		expect(output.buffer).toMatchSnapshot();
+	});
 
-    it('renders custom mask', () => {
-      const instance = new PasswordPrompt({
-        input,
-        output,
-        render: () => 'foo',
-        mask: 'X',
-      })
-      instance.prompt()
-      input.emit('keypress', 'x', { name: 'x' })
-      expect(instance.valueWithCursor).toEqual(`X${color.inverse(color.hidden('_'))}`)
-    })
-  })
-})
+	test('renders masked value', async () => {
+		const result = prompts.password({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', 'y', { name: 'y' });
+		input.emit('keypress', '', { name: 'return' });
+
+		const value = await result;
+
+		expect(value).toBe('xy');
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('renders custom mask', async () => {
+		const result = prompts.password({
+			message: 'foo',
+			mask: '*',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', 'y', { name: 'y' });
+		input.emit('keypress', '', { name: 'return' });
+
+		await result;
+
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('renders and clears validation errors', async () => {
+		const result = prompts.password({
+			message: 'foo',
+			validate: (value) => {
+				if (value.length < 2) {
+					return 'Password must be at least 2 characters';
+				}
+
+				return undefined;
+			},
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', '', { name: 'return' });
+		input.emit('keypress', 'y', { name: 'y' });
+		input.emit('keypress', '', { name: 'return' });
+
+		await result;
+
+		expect(output.buffer).toMatchSnapshot();
+	});
+
+	test('renders cancelled value', async () => {
+		const result = prompts.password({
+			message: 'foo',
+			input,
+			output,
+		});
+
+		input.emit('keypress', 'x', { name: 'x' });
+		input.emit('keypress', '', { name: 'escape' });
+
+		const value = await result;
+
+		expect(prompts.isCancel(value)).toBe(true);
+		expect(output.buffer).toMatchSnapshot();
+	});
+});

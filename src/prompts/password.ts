@@ -1,38 +1,37 @@
-import type { PromptOptions } from './prompt'
+import type { CommonOptions } from './common.js'
+import { PasswordPrompt } from '@clack/core'
 import color from 'picocolors'
-import Prompt from './prompt'
+import { S_BAR, S_BAR_END, S_PASSWORD_MASK, symbol } from './common.js'
 
-interface PasswordOptions extends PromptOptions<PasswordPrompt> {
+export interface PasswordOptions extends CommonOptions {
+  message: string
   mask?: string
+  validate?: (value: string) => string | Error | undefined
 }
-export default class PasswordPrompt extends Prompt {
-  valueWithCursor = ''
-  private _mask = '•'
+export function password(opts: PasswordOptions) {
+  return new PasswordPrompt({
+    validate: opts.validate,
+    mask: opts.mask ?? S_PASSWORD_MASK,
+    input: opts.input,
+    output: opts.output,
+    render() {
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
+      const value = this.valueWithCursor
+      const masked = this.masked
 
-  get cursor(): number {
-    return this._cursor
-  }
-
-  get masked(): string {
-    return this.value.replaceAll(/./g, this._mask)
-  }
-
-  constructor({ mask, ...opts }: PasswordOptions) {
-    super(opts as unknown as PromptOptions<Prompt>)
-    this._mask = mask ?? '•'
-
-    this.on('finalize', () => {
-      this.valueWithCursor = this.masked
-    })
-    this.on('value', () => {
-      if (this.cursor >= this.value.length) {
-        this.valueWithCursor = `${this.masked}${color.inverse(color.hidden('_'))}`
+      switch (this.state) {
+        case 'error':
+          return `${title.trim()}\n${color.yellow(S_BAR)}  ${masked}\n${color.yellow(
+            S_BAR_END,
+          )}  ${color.yellow(this.error)}\n`
+        case 'submit':
+          return `${title}${color.gray(S_BAR)}  ${color.dim(masked)}`
+        case 'cancel':
+          return `${title}${color.gray(S_BAR)}  ${color.strikethrough(color.dim(masked ?? ''))}${masked ? `\n${color.gray(S_BAR)}` : ''
+          }`
+        default:
+          return `${title}${color.cyan(S_BAR)}  ${value}\n${color.cyan(S_BAR_END)}\n`
       }
-      else {
-        const s1 = this.masked.slice(0, this.cursor)
-        const s2 = this.masked.slice(this.cursor)
-        this.valueWithCursor = `${s1}${color.inverse(s2[0])}${s2.slice(1)}`
-      }
-    })
-  }
+    },
+  }).prompt() as Promise<string | symbol>
 }

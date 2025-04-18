@@ -1,43 +1,105 @@
-import type { PromptOptions } from './prompt'
-import Prompt from './prompt'
+import type { CommonOptions } from './common'
+import color from 'picocolors'
+import { SelectPrompt } from '../'
+import {
 
-interface SelectOptions<T extends { value: any }> extends PromptOptions<SelectPrompt<T>> {
-  options: T[]
-  initialValue?: T['value']
+  S_BAR,
+  S_BAR_END,
+  S_RADIO_ACTIVE,
+  S_RADIO_INACTIVE,
+  symbol,
+} from './common'
+import { limitOptions } from './limit-options'
+
+type Primitive = Readonly<string | boolean | number>
+
+export type Option<Value> = Value extends Primitive
+  ? {
+    /**
+     * Internal data for this option.
+     */
+      value: Value
+      /**
+       * The optional, user-facing text for this option.
+       *
+       * By default, the `value` is converted to a string.
+       */
+      label?: string
+      /**
+       * An optional hint to display to the user when
+       * this option might be selected.
+       *
+       * By default, no `hint` is displayed.
+       */
+      hint?: string
+    }
+  : {
+    /**
+     * Internal data for this option.
+     */
+      value: Value
+      /**
+       * Required. The user-facing text for this option.
+       */
+      label: string
+      /**
+       * An optional hint to display to the user when
+       * this option might be selected.
+       *
+       * By default, no `hint` is displayed.
+       */
+      hint?: string
+    }
+
+export interface SelectOptions<Value> extends CommonOptions {
+  message: string
+  options: Option<Value>[]
+  initialValue?: Value
+  maxItems?: number
 }
-export default class SelectPrompt<T extends { value: any }> extends Prompt {
-  options: T[]
-  cursor = 0
 
-  private get _value() {
-    return this.options[this.cursor]
+export function select<Value>(opts: SelectOptions<Value>) {
+  const opt = (option: Option<Value>, state: 'inactive' | 'active' | 'selected' | 'cancelled') => {
+    const label = option.label ?? String(option.value)
+    switch (state) {
+      case 'selected':
+        return `${color.dim(label)}`
+      case 'active':
+        return `${color.green(S_RADIO_ACTIVE)} ${label} ${option.hint ? color.dim(`(${option.hint})`) : ''
+        }`
+      case 'cancelled':
+        return `${color.strikethrough(color.dim(label))}`
+      default:
+        return `${color.dim(S_RADIO_INACTIVE)} ${color.dim(label)}`
+    }
   }
 
-  private changeValue() {
-    this.value = this._value.value
-  }
+  return new SelectPrompt({
+    options: opts.options,
+    input: opts.input,
+    output: opts.output,
+    initialValue: opts.initialValue,
+    render() {
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
 
-  constructor(opts: SelectOptions<T>) {
-    super(opts as unknown as PromptOptions<Prompt>, false)
-
-    this.options = opts.options
-    this.cursor = this.options.findIndex(({ value }) => value === opts.initialValue)
-    if (this.cursor === -1)
-      this.cursor = 0
-    this.changeValue()
-
-    this.on('cursor', (key) => {
-      switch (key) {
-        case 'left':
-        case 'up':
-          this.cursor = this.cursor === 0 ? this.options.length - 1 : this.cursor - 1
-          break
-        case 'down':
-        case 'right':
-          this.cursor = this.cursor === this.options.length - 1 ? 0 : this.cursor + 1
-          break
+      switch (this.state) {
+        case 'submit':
+          return `${title}${color.gray(S_BAR)}  ${opt(this.options[this.cursor], 'selected')}`
+        case 'cancel':
+          return `${title}${color.gray(S_BAR)}  ${opt(
+            this.options[this.cursor],
+            'cancelled',
+          )}\n${color.gray(S_BAR)}`
+        default: {
+          return `${title}${color.cyan(S_BAR)}  ${limitOptions({
+            output: opts.output,
+            cursor: this.cursor,
+            options: this.options,
+            maxItems: opts.maxItems,
+            style: (item: Option<Value>, active: boolean) => opt(item, active ? 'active' : 'inactive'),
+          }).join(`\n${color.cyan(S_BAR)}  `)}\n${color.cyan(S_BAR_END)}\n`
+        }
       }
-      this.changeValue()
-    })
-  }
+    },
+  }).prompt() as Promise<Value | symbol>
 }
