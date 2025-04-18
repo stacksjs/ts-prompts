@@ -10,8 +10,6 @@
 
 An elegant, TypeScript-first CLI framework built on Bun for creating beautiful command-line applications with interactive prompts.
 
-![clapp-demo](.github/art/demo.gif)
-
 ## Features
 
 This toolkit comes packed with everything you need to build professional command-line applications:
@@ -138,21 +136,6 @@ bun run build
 # After you commit changes, you can create a release
 bun run release # automates versioning and changelog generation
 ```
-
-## Stacks.js Setup
-
-To create a new Stacks.js project with an interactive setup:
-
-```bash
-# Using npx
-npx clapp create-stacks
-
-# Or after installing globally
-npm install -g clapp
-stacks-init
-```
-
-The wizard will guide you through configuring your project with database options, features, and more.
 
 ## Testing
 
