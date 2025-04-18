@@ -1,9 +1,8 @@
 import type { CommonOptions } from './common'
 import type { Option } from './select'
 import color from 'picocolors'
-import { GroupMultiSelectPrompt } from '../'
+import { GroupMultiSelectPrompt } from '..'
 import {
-
   S_BAR,
   S_BAR_END,
   S_CHECKBOX_ACTIVE,
@@ -99,13 +98,13 @@ export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
         case 'submit': {
           return `${title}${color.gray(S_BAR)}  ${this.options
             .filter(({ value }) => this.value.includes(value))
-            .map(option => opt(option, 'submitted'))
+            .map((option: Option<Value>) => opt(option, 'submitted'))
             .join(color.dim(', '))}`
         }
         case 'cancel': {
           const label = this.options
             .filter(({ value }) => this.value.includes(value))
-            .map(option => opt(option, 'cancelled'))
+            .map((option: Option<Value>) => opt(option, 'cancelled'))
             .join(color.dim(', '))
           return `${title}${color.gray(S_BAR)}  ${label.trim() ? `${label}\n${color.gray(S_BAR)}` : ''
           }`
@@ -113,12 +112,12 @@ export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
         case 'error': {
           const footer = this.error
             .split('\n')
-            .map((ln, i) =>
+            .map((ln: string, i: number) =>
               i === 0 ? `${color.yellow(S_BAR_END)}  ${color.yellow(ln)}` : `   ${ln}`,
             )
             .join('\n')
           return `${title}${color.yellow(S_BAR)}  ${this.options
-            .map((option, i, options) => {
+            .map((option: Option<Value>, i: number, options: Option<Value>[]) => {
               const selected
                 = this.value.includes(option.value)
                   || (option.group === true && this.isGroupSelected(`${option.value}`))
@@ -142,7 +141,7 @@ export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
         }
         default: {
           return `${title}${color.cyan(S_BAR)}  ${this.options
-            .map((option, i, options) => {
+            .map((option: Option<Value>, i: number, options: Option<Value>[]) => {
               const selected
                 = this.value.includes(option.value)
                   || (option.group === true && this.isGroupSelected(`${option.value}`))

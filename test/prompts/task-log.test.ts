@@ -1,291 +1,291 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test';
-import * as prompts from '../../src';
-import { MockReadable, MockWritable } from '../utils';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test'
+import * as prompts from '../../src'
+import { MockReadable, MockWritable } from '../utils'
 
 describe.each(['true', 'false'])('taskLog (isCI = %s)', (isCI) => {
-	let originalCI: string | undefined;
-	let output: MockWritable;
-	let input: MockReadable;
+  let originalCI: string | undefined
+  let output: MockWritable
+  let input: MockReadable
 
-	beforeAll(() => {
-		originalCI = process.env.CI;
-		process.env.CI = isCI;
-	});
+  beforeAll(() => {
+    originalCI = process.env.CI
+    process.env.CI = isCI
+  })
 
-	afterAll(() => {
-		process.env.CI = originalCI;
-	});
+  afterAll(() => {
+    process.env.CI = originalCI
+  })
 
-	beforeEach(() => {
-		output = new MockWritable();
-		input = new MockReadable();
-	});
+  beforeEach(() => {
+    output = new MockWritable()
+    input = new MockReadable()
+  })
 
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
 
-	test('writes message header', () => {
-		prompts.taskLog({
-			input,
-			output,
-			title: 'foo',
-		});
+  test('writes message header', () => {
+    prompts.taskLog({
+      input,
+      output,
+      title: 'foo',
+    })
 
-		expect(output.buffer).toMatchSnapshot();
-	});
+    expect(output.buffer).toMatchSnapshot()
+  })
 
-	describe('message', () => {
-		test('can write line by line', () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+  describe('message', () => {
+    test('can write line by line', () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0');
-			log.message('line 1');
+      log.message('line 0')
+      log.message('line 1')
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('can write multiple lines', () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+    test('can write multiple lines', () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0\nline 1');
+      log.message('line 0\nline 1')
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('enforces limit if set', () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-				limit: 2,
-			});
+    test('enforces limit if set', () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+        limit: 2,
+      })
 
-			log.message('line 0');
-			log.message('line 1');
-			log.message('line 2');
+      log.message('line 0')
+      log.message('line 1')
+      log.message('line 2')
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('raw = true appends message text until newline', async () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+    test('raw = true appends message text until newline', async () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0', { raw: true });
-			log.message('still line 0', { raw: true });
-			log.message('\nline 1', { raw: true });
+      log.message('line 0', { raw: true })
+      log.message('still line 0', { raw: true })
+      log.message('\nline 1', { raw: true })
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('raw = true works when mixed with non-raw messages', async () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+    test('raw = true works when mixed with non-raw messages', async () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0', { raw: true });
-			log.message('still line 0', { raw: true });
-			log.message('line 1');
+      log.message('line 0', { raw: true })
+      log.message('still line 0', { raw: true })
+      log.message('line 1')
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('raw = true works when started with non-raw messages', async () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+    test('raw = true works when started with non-raw messages', async () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0');
-			log.message('line 1', { raw: true });
-			log.message('still line 1', { raw: true });
+      log.message('line 0')
+      log.message('line 1', { raw: true })
+      log.message('still line 1', { raw: true })
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('prints empty lines', async () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+    test('prints empty lines', async () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('');
-			log.message('line 1');
-			log.message('');
-			log.message('line 3');
+      log.message('')
+      log.message('line 1')
+      log.message('')
+      log.message('line 3')
 
-			expect(output.buffer).toMatchSnapshot();
-		});
-	});
+      expect(output.buffer).toMatchSnapshot()
+    })
+  })
 
-	describe('error', () => {
-		test('renders output with message', () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+  describe('error', () => {
+    test('renders output with message', () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0');
-			log.message('line 1');
+      log.message('line 0')
+      log.message('line 1')
 
-			log.error('some error!');
+      log.error('some error!')
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('clears output if showLog = false', () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+    test('clears output if showLog = false', () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0');
-			log.message('line 1');
+      log.message('line 0')
+      log.message('line 1')
 
-			log.error('some error!', { showLog: false });
+      log.error('some error!', { showLog: false })
 
-			expect(output.buffer).toMatchSnapshot();
-		});
-	});
+      expect(output.buffer).toMatchSnapshot()
+    })
+  })
 
-	describe('success', () => {
-		test('clears output and renders message', () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+  describe('success', () => {
+    test('clears output and renders message', () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0');
-			log.message('line 1');
+      log.message('line 0')
+      log.message('line 1')
 
-			log.success('success!');
+      log.success('success!')
 
-			expect(output.buffer).toMatchSnapshot();
-		});
+      expect(output.buffer).toMatchSnapshot()
+    })
 
-		test('renders output if showLog = true', () => {
-			const log = prompts.taskLog({
-				input,
-				output,
-				title: 'foo',
-			});
+    test('renders output if showLog = true', () => {
+      const log = prompts.taskLog({
+        input,
+        output,
+        title: 'foo',
+      })
 
-			log.message('line 0');
-			log.message('line 1');
+      log.message('line 0')
+      log.message('line 1')
 
-			log.success('success!', { showLog: true });
+      log.success('success!', { showLog: true })
 
-			expect(output.buffer).toMatchSnapshot();
-		});
-	});
+      expect(output.buffer).toMatchSnapshot()
+    })
+  })
 
-	describe('retainLog', () => {
-		describe.each(['error', 'success'] as const)('%s', (method) => {
-			test('retainLog = true outputs full log', () => {
-				const log = prompts.taskLog({
-					input,
-					output,
-					title: 'foo',
-					retainLog: true,
-				});
+  describe('retainLog', () => {
+    describe.each(['error', 'success'] as const)('%s', (method) => {
+      test('retainLog = true outputs full log', () => {
+        const log = prompts.taskLog({
+          input,
+          output,
+          title: 'foo',
+          retainLog: true,
+        })
 
-				for (let i = 0; i < 4; i++) {
-					log.message(`line ${i}`);
-				}
+        for (let i = 0; i < 4; i++) {
+          log.message(`line ${i}`)
+        }
 
-				log[method]('woo!', { showLog: true });
+        log[method]('woo!', { showLog: true })
 
-				expect(output.buffer).toMatchSnapshot();
-			});
+        expect(output.buffer).toMatchSnapshot()
+      })
 
-			test('retainLog = true outputs full log with limit', () => {
-				const log = prompts.taskLog({
-					input,
-					output,
-					title: 'foo',
-					retainLog: true,
-					limit: 2,
-				});
+      test('retainLog = true outputs full log with limit', () => {
+        const log = prompts.taskLog({
+          input,
+          output,
+          title: 'foo',
+          retainLog: true,
+          limit: 2,
+        })
 
-				for (let i = 0; i < 4; i++) {
-					log.message(`line ${i}`);
-				}
+        for (let i = 0; i < 4; i++) {
+          log.message(`line ${i}`)
+        }
 
-				log[method]('woo!', { showLog: true });
+        log[method]('woo!', { showLog: true })
 
-				expect(output.buffer).toMatchSnapshot();
-			});
+        expect(output.buffer).toMatchSnapshot()
+      })
 
-			test('retainLog = false outputs full log without limit', () => {
-				const log = prompts.taskLog({
-					input,
-					output,
-					title: 'foo',
-					retainLog: false,
-				});
+      test('retainLog = false outputs full log without limit', () => {
+        const log = prompts.taskLog({
+          input,
+          output,
+          title: 'foo',
+          retainLog: false,
+        })
 
-				for (let i = 0; i < 4; i++) {
-					log.message(`line ${i}`);
-				}
+        for (let i = 0; i < 4; i++) {
+          log.message(`line ${i}`)
+        }
 
-				log[method]('woo!', { showLog: true });
+        log[method]('woo!', { showLog: true })
 
-				expect(output.buffer).toMatchSnapshot();
-			});
+        expect(output.buffer).toMatchSnapshot()
+      })
 
-			test('retainLog = false outputs limited log with limit', () => {
-				const log = prompts.taskLog({
-					input,
-					output,
-					title: 'foo',
-					retainLog: false,
-					limit: 2,
-				});
+      test('retainLog = false outputs limited log with limit', () => {
+        const log = prompts.taskLog({
+          input,
+          output,
+          title: 'foo',
+          retainLog: false,
+          limit: 2,
+        })
 
-				for (let i = 0; i < 4; i++) {
-					log.message(`line ${i}`);
-				}
+        for (let i = 0; i < 4; i++) {
+          log.message(`line ${i}`)
+        }
 
-				log[method]('woo!', { showLog: true });
+        log[method]('woo!', { showLog: true })
 
-				expect(output.buffer).toMatchSnapshot();
-			});
+        expect(output.buffer).toMatchSnapshot()
+      })
 
-			test('outputs limited log with limit by default', () => {
-				const log = prompts.taskLog({
-					input,
-					output,
-					title: 'foo',
-					limit: 2,
-				});
+      test('outputs limited log with limit by default', () => {
+        const log = prompts.taskLog({
+          input,
+          output,
+          title: 'foo',
+          limit: 2,
+        })
 
-				for (let i = 0; i < 4; i++) {
-					log.message(`line ${i}`);
-				}
+        for (let i = 0; i < 4; i++) {
+          log.message(`line ${i}`)
+        }
 
-				log[method]('woo!', { showLog: true });
+        log[method]('woo!', { showLog: true })
 
-				expect(output.buffer).toMatchSnapshot();
-			});
-		});
-	});
-});
+        expect(output.buffer).toMatchSnapshot()
+      })
+    })
+  })
+})

@@ -7,7 +7,7 @@ export * from '../scripts/stacks-onboarding'
 export * from './prompts'
 
 export { default as ConfirmPrompt } from './prompts/confirm'
-export { default as GroupMultiSelectPrompt } from './prompts/group-multiselect'
+export { default as GroupMultiSelectPrompt } from './prompts/group-multi-select'
 export { default as MultiSelectPrompt } from './prompts/multi-select'
 export { default as PasswordPrompt } from './prompts/password'
 export { default as Prompt } from './prompts/prompt'

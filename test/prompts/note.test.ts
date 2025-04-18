@@ -1,66 +1,66 @@
-import colors from 'picocolors';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test';
-import * as prompts from '../../src';
-import { MockReadable, MockWritable } from '../utils';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test'
+import colors from 'picocolors'
+import * as prompts from '../../src'
+import { MockReadable, MockWritable } from '../utils'
 
 describe.each(['true', 'false'])('note (isCI = %s)', (isCI) => {
-	let originalCI: string | undefined;
-	let output: MockWritable;
-	let input: MockReadable;
+  let originalCI: string | undefined
+  let output: MockWritable
+  let input: MockReadable
 
-	beforeAll(() => {
-		originalCI = process.env.CI;
-		process.env.CI = isCI;
-	});
+  beforeAll(() => {
+    originalCI = process.env.CI
+    process.env.CI = isCI
+  })
 
-	afterAll(() => {
-		process.env.CI = originalCI;
-	});
+  afterAll(() => {
+    process.env.CI = originalCI
+  })
 
-	beforeEach(() => {
-		output = new MockWritable();
-		input = new MockReadable();
-	});
+  beforeEach(() => {
+    output = new MockWritable()
+    input = new MockReadable()
+  })
 
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
 
-	test('renders message with title', () => {
-		prompts.note('message', 'title', {
-			input,
-			output,
-		});
+  test('renders message with title', () => {
+    prompts.note('message', 'title', {
+      input,
+      output,
+    })
 
-		expect(output.buffer).toMatchSnapshot();
-	});
+    expect(output.buffer).toMatchSnapshot()
+  })
 
-	test('renders as wide as longest line', () => {
-		prompts.note('short\nsomewhat questionably long line', 'title', {
-			input,
-			output,
-		});
+  test('renders as wide as longest line', () => {
+    prompts.note('short\nsomewhat questionably long line', 'title', {
+      input,
+      output,
+    })
 
-		expect(output.buffer).toMatchSnapshot();
-	});
+    expect(output.buffer).toMatchSnapshot()
+  })
 
-	test('formatter which adds length works', () => {
-		prompts.note('line 0\nline 1\nline 2', 'title', {
-			format: (line) => `* ${line} *`,
-			input,
-			output,
-		});
+  test('formatter which adds length works', () => {
+    prompts.note('line 0\nline 1\nline 2', 'title', {
+      format: line => `* ${line} *`,
+      input,
+      output,
+    })
 
-		expect(output.buffer).toMatchSnapshot();
-	});
+    expect(output.buffer).toMatchSnapshot()
+  })
 
-	test('formatter which adds colors works', () => {
-		prompts.note('line 0\nline 1\nline 2', 'title', {
-			format: (line) => colors.red(line),
-			input,
-			output,
-		});
+  test('formatter which adds colors works', () => {
+    prompts.note('line 0\nline 1\nline 2', 'title', {
+      format: line => colors.red(line),
+      input,
+      output,
+    })
 
-		expect(output.buffer).toMatchSnapshot();
-	});
-});
+    expect(output.buffer).toMatchSnapshot()
+  })
+})

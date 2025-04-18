@@ -3,8 +3,7 @@ import { afterEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { Buffer } from 'node:buffer'
 import { block } from '../src/runtimes/utils/index'
 import { cursor } from '../src/utils'
-import { MockReadable } from './utils'
-import { MockWritable } from './mock-writable'
+import { MockReadable, MockWritable } from './utils'
 
 describe('utils', () => {
   afterEach(() => {
