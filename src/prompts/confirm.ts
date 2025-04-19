@@ -1,8 +1,7 @@
-import type { CommonOptions } from './common'
+import type { CommonOptions } from './common.js'
 import color from 'picocolors'
 import { ConfirmPrompt } from '../'
 import {
-
   S_BAR,
   S_BAR_END,
   S_RADIO_ACTIVE,
@@ -37,12 +36,14 @@ export function confirm(opts: ConfirmOptions) {
             color.dim(value),
           )}\n${color.gray(S_BAR)}`
         default: {
-          return `${title}${color.cyan(S_BAR)}  ${this.value
-            ? `${color.green(S_RADIO_ACTIVE)} ${active}`
-            : `${color.dim(S_RADIO_INACTIVE)} ${color.dim(active)}`
-          } ${color.dim('/')} ${!this.value
-            ? `${color.green(S_RADIO_ACTIVE)} ${inactive}`
-            : `${color.dim(S_RADIO_INACTIVE)} ${color.dim(inactive)}`
+          return `${title}${color.cyan(S_BAR)}  ${
+            this.value
+              ? `${color.green(S_RADIO_ACTIVE)} ${active}`
+              : `${color.dim(S_RADIO_INACTIVE)} ${color.dim(active)}`
+          } ${color.dim('/')} ${
+            !this.value
+              ? `${color.green(S_RADIO_ACTIVE)} ${inactive}`
+              : `${color.dim(S_RADIO_INACTIVE)} ${color.dim(inactive)}`
           }\n${color.cyan(S_BAR_END)}\n`
         }
       }

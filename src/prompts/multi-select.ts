@@ -3,7 +3,6 @@ import type { Option } from './select'
 import color from 'picocolors'
 import { MultiSelectPrompt } from '../'
 import {
-
   S_BAR,
   S_BAR_END,
   S_CHECKBOX_ACTIVE,
@@ -83,15 +82,15 @@ export function multiselect<Value>(opts: MultiSelectOptions<Value>) {
       switch (this.state) {
         case 'submit': {
           return `${title}${color.gray(S_BAR)}  ${this.options
-            .filter(({ value }) => this.value.includes(value))
-            .map(option => opt(option, 'submitted'))
+            .filter(({ value }: { value: Value }) => this.value.includes(value))
+            .map((option: Option<Value>) => opt(option, 'submitted'))
             .join(color.dim(', ')) || color.dim('none')
           }`
         }
         case 'cancel': {
           const label = this.options
-            .filter(({ value }) => this.value.includes(value))
-            .map(option => opt(option, 'cancelled'))
+            .filter(({ value }: { value: Value }) => this.value.includes(value))
+            .map((option: Option<Value>) => opt(option, 'cancelled'))
             .join(color.dim(', '))
           return `${title}${color.gray(S_BAR)}  ${label.trim() ? `${label}\n${color.gray(S_BAR)}` : ''
           }`

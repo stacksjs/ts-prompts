@@ -11,6 +11,11 @@ import {
   symbol,
 } from './common'
 
+// Define the extended option type
+type ExtendedOption<Value> = Option<Value> & {
+  group?: string | boolean
+}
+
 export interface GroupMultiSelectOptions<Value> extends CommonOptions {
   message: string
   options: Record<string, Option<Value>[]>
@@ -36,7 +41,7 @@ export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
     options: Option<Value>[] = [],
   ) => {
     const label = option.label ?? String(option.value)
-    const isItem = typeof (option as any).group === 'string'
+    const isItem = typeof (option as ExtendedOption<Value>).group === 'string'
     const next = isItem && (options[options.indexOf(option) + 1] ?? { group: true })
     const isLast = isItem && (next as any).group === true
     const prefix = isItem ? (selectableGroups ? `${isLast ? S_BAR_END : S_BAR} ` : '  ') : ''
@@ -97,13 +102,13 @@ export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
       switch (this.state) {
         case 'submit': {
           return `${title}${color.gray(S_BAR)}  ${this.options
-            .filter(({ value }) => this.value.includes(value))
+            .filter(({ value }: { value: Value }) => this.value.includes(value))
             .map((option: Option<Value>) => opt(option, 'submitted'))
             .join(color.dim(', '))}`
         }
         case 'cancel': {
           const label = this.options
-            .filter(({ value }) => this.value.includes(value))
+            .filter(({ value }: { value: Value }) => this.value.includes(value))
             .map((option: Option<Value>) => opt(option, 'cancelled'))
             .join(color.dim(', '))
           return `${title}${color.gray(S_BAR)}  ${label.trim() ? `${label}\n${color.gray(S_BAR)}` : ''
@@ -120,12 +125,12 @@ export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
             .map((option: Option<Value>, i: number, options: Option<Value>[]) => {
               const selected
                 = this.value.includes(option.value)
-                  || (option.group === true && this.isGroupSelected(`${option.value}`))
+                  || ((option as ExtendedOption<Value>).group === true && this.isGroupSelected(`${option.value}`))
               const active = i === this.cursor
               const groupActive
                 = !active
-                  && typeof option.group === 'string'
-                  && this.options[this.cursor].value === option.group
+                  && typeof (option as ExtendedOption<Value>).group === 'string'
+                  && this.options[this.cursor].value === (option as ExtendedOption<Value>).group
               if (groupActive) {
                 return opt(option, selected ? 'group-active-selected' : 'group-active', options)
               }
@@ -142,23 +147,24 @@ export function groupMultiselect<Value>(opts: GroupMultiSelectOptions<Value>) {
         default: {
           return `${title}${color.cyan(S_BAR)}  ${this.options
             .map((option: Option<Value>, i: number, options: Option<Value>[]) => {
-              const selected
-                = this.value.includes(option.value)
-                  || (option.group === true && this.isGroupSelected(`${option.value}`))
+              const selected = this.value.includes(option.value) || ((option as ExtendedOption<Value>).group === true && this.isGroupSelected(`${option.value}`))
               const active = i === this.cursor
-              const groupActive
-                = !active
-                  && typeof option.group === 'string'
-                  && this.options[this.cursor].value === option.group
+              const groupActive = !active
+                && typeof (option as ExtendedOption<Value>).group === 'string'
+                && this.options[this.cursor].value === (option as ExtendedOption<Value>).group
+
               if (groupActive) {
                 return opt(option, selected ? 'group-active-selected' : 'group-active', options)
               }
+
               if (active && selected) {
                 return opt(option, 'active-selected', options)
               }
+
               if (selected) {
                 return opt(option, 'selected', options)
               }
+
               return opt(option, active ? 'active' : 'inactive', options)
             })
             .join(`\n${color.cyan(S_BAR)}  `)}\n${color.cyan(S_BAR_END)}\n`

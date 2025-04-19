@@ -1,4 +1,4 @@
-import { isCancel } from '../runtimes/utils'
+import { isCancel } from '../utils/index'
 
 type Prettify<T> = {
   [P in keyof T]: T[P];

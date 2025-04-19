@@ -1,7 +1,7 @@
-import type { CommonOptions } from './common.js'
-import { PasswordPrompt } from '@clack/core'
+import type { CommonOptions } from './common'
 import color from 'picocolors'
-import { S_BAR, S_BAR_END, S_PASSWORD_MASK, symbol } from './common.js'
+import { PasswordPrompt } from '../core/prompts/password'
+import { S_BAR, S_BAR_END, S_PASSWORD_MASK, symbol } from './common'
 
 export interface PasswordOptions extends CommonOptions {
   message: string

@@ -1,8 +1,9 @@
 import type { Writable } from 'node:stream'
 import type { CommonOptions } from './common'
+import process from 'node:process'
 import * as color from 'picocolors'
-import { erase } from 'sisteransi'
-import { getColumns } from '../runtimes/utils'
+import { erase } from '../utils'
+import { getColumns } from '../utils/index'
 import { S_BAR, S_STEP_SUBMIT } from './common'
 import { log } from './log'
 

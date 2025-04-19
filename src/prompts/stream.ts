@@ -1,4 +1,5 @@
 import type { LogMessageOptions } from './log'
+import process from 'node:process'
 import { stripVTControlCharacters as strip } from 'node:util'
 import color from 'picocolors'
 import { S_BAR, S_ERROR, S_INFO, S_STEP_SUBMIT, S_SUCCESS, S_WARN } from './common'

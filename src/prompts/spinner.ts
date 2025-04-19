@@ -1,9 +1,9 @@
 import type { CommonOptions } from './common'
+import process from 'node:process'
 import color from 'picocolors'
-import { cursor, erase } from 'sisteransi'
-import { block, settings } from '..'
+import { cursor, erase } from '../utils'
+import { block, settings } from '../utils/index'
 import {
-
   S_BAR,
   S_STEP_CANCEL,
   S_STEP_ERROR,
@@ -44,7 +44,49 @@ export function spinner({
   let _prevMessage: string | undefined
   let _origin: number = performance.now()
 
-  const handleExit = (code: number) => {
+  function clearPrevMessage() {
+    if (_prevMessage === undefined)
+      return
+    if (isCI)
+      output.write('\n')
+    const prevLines = _prevMessage.split('\n')
+    output.write(cursor.move(-999, prevLines.length - 1))
+    output.write(erase.down(prevLines.length))
+  }
+
+  function removeTrailingDots(msg: string): string {
+    return msg.replace(/\.+$/, '')
+  }
+
+  function formatTimer(origin: number): string {
+    const duration = (performance.now() - origin) / 1000
+    const min = Math.floor(duration / 60)
+    const secs = Math.floor(duration % 60)
+    return min > 0 ? `[${min}m ${secs}s]` : `[${secs}s]`
+  }
+
+  function stop(msg = '', code = 0): void {
+    isSpinnerActive = false
+    clearInterval(loop)
+    clearPrevMessage()
+    const step
+      = code === 0
+        ? color.green(S_STEP_SUBMIT)
+        : code === 1
+          ? color.red(S_STEP_CANCEL)
+          : color.red(S_STEP_ERROR)
+    _message = msg ?? _message
+    if (indicator === 'timer') {
+      output.write(`${step}  ${_message} ${formatTimer(_origin)}\n`)
+    }
+    else {
+      output.write(`${step}  ${_message}\n`)
+    }
+    clearHooks()
+    unblock()
+  }
+
+  function handleExit(code: number) {
     const msg
       = code > 1
         ? (errorMessage ?? settings.messages.error)
@@ -58,10 +100,15 @@ export function spinner({
     }
   }
 
-  const errorEventHandler = () => handleExit(2)
-  const signalEventHandler = () => handleExit(1)
+  function errorEventHandler() {
+    handleExit(2)
+  }
 
-  const registerHooks = () => {
+  function signalEventHandler() {
+    handleExit(1)
+  }
+
+  function registerHooks() {
     // Reference: https://nodejs.org/api/process.html#event-uncaughtexception
     process.on('uncaughtExceptionMonitor', errorEventHandler)
     // Reference: https://nodejs.org/api/process.html#event-unhandledrejection
@@ -72,7 +119,7 @@ export function spinner({
     process.on('exit', handleExit)
   }
 
-  const clearHooks = () => {
+  function clearHooks() {
     process.removeListener('uncaughtExceptionMonitor', errorEventHandler)
     process.removeListener('unhandledRejection', errorEventHandler)
     process.removeListener('SIGINT', signalEventHandler)
@@ -80,28 +127,7 @@ export function spinner({
     process.removeListener('exit', handleExit)
   }
 
-  const clearPrevMessage = () => {
-    if (_prevMessage === undefined)
-      return
-    if (isCI)
-      output.write('\n')
-    const prevLines = _prevMessage.split('\n')
-    output.write(cursor.move(-999, prevLines.length - 1))
-    output.write(erase.down(prevLines.length))
-  }
-
-  const removeTrailingDots = (msg: string): string => {
-    return msg.replace(/\.+$/, '')
-  }
-
-  const formatTimer = (origin: number): string => {
-    const duration = (performance.now() - origin) / 1000
-    const min = Math.floor(duration / 60)
-    const secs = Math.floor(duration % 60)
-    return min > 0 ? `[${min}m ${secs}s]` : `[${secs}s]`
-  }
-
-  const start = (msg = ''): void => {
+  function start(msg = ''): void {
     isSpinnerActive = true
     unblock = block({ output })
     _message = removeTrailingDots(msg)
@@ -134,28 +160,7 @@ export function spinner({
     }, delay)
   }
 
-  const stop = (msg = '', code = 0): void => {
-    isSpinnerActive = false
-    clearInterval(loop)
-    clearPrevMessage()
-    const step
-      = code === 0
-        ? color.green(S_STEP_SUBMIT)
-        : code === 1
-          ? color.red(S_STEP_CANCEL)
-          : color.red(S_STEP_ERROR)
-    _message = msg ?? _message
-    if (indicator === 'timer') {
-      output.write(`${step}  ${_message} ${formatTimer(_origin)}\n`)
-    }
-    else {
-      output.write(`${step}  ${_message}\n`)
-    }
-    clearHooks()
-    unblock()
-  }
-
-  const message = (msg = ''): void => {
+  function message(msg = ''): void {
     _message = removeTrailingDots(msg ?? _message)
   }
 

@@ -1,7 +1,8 @@
 const actions = ['up', 'down', 'left', 'right', 'space', 'enter', 'cancel'] as const
 export type Action = (typeof actions)[number]
 
-interface InternalSettings {
+/** Global settings for Clapp programs, stored in memory */
+interface InternalClappSettings {
   actions: Set<Action>
   aliases: Map<string, Action>
   messages: {
@@ -10,7 +11,7 @@ interface InternalSettings {
   }
 }
 
-export const settings: InternalSettings = {
+export const settings: InternalClappSettings = {
   actions: new Set(actions),
   aliases: new Map<string, Action>([
     // vim support
@@ -28,7 +29,7 @@ export const settings: InternalSettings = {
   },
 }
 
-export interface Settings {
+export interface ClappSettings {
   /**
    * Set custom global aliases for the default actions.
    * This will not overwrite existing aliases, it will only add new ones!
@@ -55,7 +56,7 @@ export interface Settings {
   }
 }
 
-export function updateSettings(updates: Settings): void {
+export function updateSettings(updates: ClappSettings): void {
   // Handle each property in the updates
   if (updates.aliases !== undefined) {
     const aliases = updates.aliases
@@ -75,9 +76,11 @@ export function updateSettings(updates: Settings): void {
 
   if (updates.messages !== undefined) {
     const messages = updates.messages
+
     if (messages.cancel !== undefined) {
       settings.messages.cancel = messages.cancel
     }
+
     if (messages.error !== undefined) {
       settings.messages.error = messages.error
     }
@@ -102,5 +105,6 @@ export function isActionKey(key: string | Array<string | undefined>, action: Act
       return true
     }
   }
+
   return false
 }

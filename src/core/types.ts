@@ -1,16 +1,14 @@
-import type { Action } from './utils/settings'
-
-export * from './core/types'
+import type { Action } from '../utils/settings'
 
 /**
  * The state of the prompt
  */
-export type PromptState = 'initial' | 'active' | 'cancel' | 'submit' | 'error'
+export type ClappState = 'initial' | 'active' | 'cancel' | 'submit' | 'error'
 
 /**
- * Typed event emitter
+ * Typed event emitter for clack
  */
-export interface PromptEvents {
+export interface ClappEvents {
   initial: (value?: any) => void
   active: (value?: any) => void
   cancel: (value?: any) => void

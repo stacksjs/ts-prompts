@@ -416,29 +416,3 @@ export function table(data: string[][], options?: { border?: boolean, header?: b
     console.log(`└${colWidths.map((w: number) => '─'.repeat(w + 2)).join('┴')}┘`)
   }
 }
-
-// System message logger
-// TODO: replace with clarity
-export const log = {
-  info: (message: string): void => {
-    console.log(`${style.blue('ℹ')} ${message}`)
-  },
-  success: (message: string): void => {
-    console.log(`${style.green('✓')} ${message}`)
-  },
-  warn: (message: string): void => {
-    console.log(`${style.yellow('⚠')} ${message}`)
-  },
-  error: (message: string): void => {
-    console.log(`${style.red('✗')} ${message}`)
-  },
-  debug: (message: string): void => {
-    if (process.env.DEBUG) {
-      console.log(`${style.magenta('🐞')} ${message}`)
-    }
-  },
-  custom: (prefix: string, message: string, color: keyof typeof style): void => {
-    const colorFunc = style[color as keyof typeof style] as StylerFunction
-    console.log(`${colorFunc(prefix)} ${message}`)
-  },
-}

@@ -1,6 +1,6 @@
-export function diffLines(a: string, b: string): number[] | undefined {
+export function diffLines(a: string, b: string): number[] {
   if (a === b)
-    return
+    return []
 
   const aLines = a.split('\n')
   const bLines = b.split('\n')

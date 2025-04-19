@@ -1,16 +1,16 @@
 import type { Buffer } from 'node:buffer'
 import type { Key } from 'node:readline'
 import type { Readable, Writable } from 'node:stream'
-import process, { platform, stdin, stdout } from 'node:process'
+import process, { stdin, stdout } from 'node:process'
 import * as readline from 'node:readline'
 import { ReadStream, WriteStream } from 'node:tty'
-import { cursor } from '../../utils'
+import { cursor } from '../utils'
 import { isActionKey } from './settings'
 
 export * from './settings'
 export * from './string'
 
-const isWindows = platform.startsWith('win')
+const isWindows = process.platform.startsWith('win')
 
 export const CANCEL_SYMBOL: symbol = Symbol('clapp:cancel')
 
@@ -25,19 +25,11 @@ export function setRawMode(input: Readable, value: boolean): void {
     i.setRawMode(value)
 }
 
-export interface BlockOptions {
+interface BlockOptions {
   input?: Readable
   output?: Writable
   overwrite?: boolean
   hideCursor?: boolean
-}
-
-export function getColumns(output: Writable): number {
-  if (output instanceof WriteStream && output.columns) {
-    return output.columns
-  }
-
-  return 80
 }
 
 export function block({
@@ -45,7 +37,7 @@ export function block({
   output = stdout,
   overwrite = true,
   hideCursor = true,
-}: BlockOptions = {}): () => void {
+}: BlockOptions = {}) {
   const rl = readline.createInterface({
     input,
     output,
@@ -77,12 +69,15 @@ export function block({
       })
     })
   }
+
   if (hideCursor)
     output.write(cursor.hide)
+
   input.once('keypress', clear)
 
-  return () => {
+  return (): void => {
     input.off('keypress', clear)
+
     if (hideCursor)
       output.write(cursor.show)
 
@@ -95,4 +90,12 @@ export function block({
     rl.terminal = false
     rl.close()
   }
+}
+
+export function getColumns(output: Writable): number {
+  if (output instanceof WriteStream && output.columns) {
+    return output.columns
+  }
+
+  return 80
 }
