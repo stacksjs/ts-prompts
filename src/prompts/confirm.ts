@@ -1,6 +1,6 @@
 import type { CommonOptions } from './common.js'
 import color from 'picocolors'
-import { ConfirmPrompt } from '../'
+import { ConfirmPrompt } from '../core'
 import {
   S_BAR,
   S_BAR_END,

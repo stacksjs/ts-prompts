@@ -47,6 +47,7 @@ export function progress({
         return color.magenta
     }
   }
+
   const drawProgress = (state: State, msg: string) => {
     const active = Math.floor((value / max) * size)
     return `${activeStyle(state)(S_PROGRESS_CHAR[style].repeat(active))}${color.dim(S_PROGRESS_CHAR[style].repeat(size - active))} ${msg}`
@@ -56,6 +57,7 @@ export function progress({
     previousMessage = msg
     return spin.start(drawProgress('initial', msg))
   }
+
   const advance = (step = 1, msg?: string): void => {
     value = Math.min(max, step + value)
     spin.message(drawProgress('active', msg ?? previousMessage))
@@ -67,6 +69,6 @@ export function progress({
     stop: spin.stop,
     advance,
     isCancelled: spin.isCancelled,
-    message: (msg: string) => advance(0, msg),
+    message: (msg?: string) => advance(0, msg),
   }
 }

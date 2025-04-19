@@ -1,13 +1,13 @@
 import type { Key, ReadLine } from 'node:readline'
 import type { Readable } from 'node:stream'
-import type { Action } from '../runtimes/utils/index'
 import type { PromptEvents, PromptState } from '../types'
+import type { Action } from '../utils/index'
 import process, { stdin, stdout } from 'node:process'
 import readline from 'node:readline'
 import { Writable } from 'node:stream'
 import wrap from 'wrap-ansi'
-import { CANCEL_SYMBOL, diffLines, isActionKey, setRawMode, settings } from '../runtimes/utils/index'
 import { cursor, erase } from '../utils'
+import { CANCEL_SYMBOL, diffLines, isActionKey, setRawMode, settings } from '../utils/index'
 
 export interface PromptOptions<Self extends Prompt> {
   render: (this: Omit<Self, 'prompt'>) => string | undefined

@@ -1,5 +1,6 @@
 import type { Writable } from 'node:stream'
 import type { CommonOptions } from './common'
+import process from 'node:process'
 import { WriteStream } from 'node:tty'
 import color from 'picocolors'
 

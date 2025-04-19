@@ -1,7 +1,7 @@
 import type { CommonOptions } from './common'
 import type { Option } from './select'
 import color from 'picocolors'
-import { MultiSelectPrompt } from '../'
+import { MultiSelectPrompt } from '../core'
 import {
   S_BAR,
   S_BAR_END,

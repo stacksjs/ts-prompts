@@ -1,8 +1,7 @@
 import type { CommonOptions } from './common'
 import color from 'picocolors'
-import { SelectPrompt } from '../'
+import { SelectPrompt } from '../core'
 import {
-
   S_BAR,
   S_BAR_END,
   S_RADIO_ACTIVE,

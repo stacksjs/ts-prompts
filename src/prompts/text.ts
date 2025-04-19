@@ -1,6 +1,6 @@
 import type { CommonOptions } from './common'
 import color from 'picocolors'
-import { TextPrompt } from '../'
+import { TextPrompt } from '../core'
 import { S_BAR, S_BAR_END, symbol } from './common'
 
 export interface TextOptions extends CommonOptions {

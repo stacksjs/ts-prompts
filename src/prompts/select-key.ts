@@ -1,6 +1,6 @@
 import type { Option, SelectOptions } from './select'
 import color from 'picocolors'
-import { SelectKeyPrompt } from '../'
+import { SelectKeyPrompt } from '../core'
 import { S_BAR, S_BAR_END, symbol } from './common'
 
 export function selectKey<Value extends string>(opts: SelectOptions<Value>) {

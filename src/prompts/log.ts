@@ -1,7 +1,7 @@
 import type { CommonOptions } from './common'
+import process from 'node:process'
 import color from 'picocolors'
 import {
-
   S_BAR,
   S_ERROR,
   S_INFO,
