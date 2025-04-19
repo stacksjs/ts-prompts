@@ -13,3 +13,4 @@ docs/.vitepress/cache
 bin/clapp
 bin/clapp*
 test/__snapshots__
+test/prompts/__snapshots__
