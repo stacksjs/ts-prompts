@@ -1,4 +1,16 @@
 
+## v0.1.3...main
+
+[compare changes](https://github.com/stacksjs/clapp/compare/v0.1.3...main)
+
+### 🏡 Chore
+
+- Use `stacksjs/action-releaser` action ([d57d9e3](https://github.com/stacksjs/clapp/commit/d57d9e3))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.1.2...v0.1.2
 
 [compare changes](https://github.com/stacksjs/clapp/compare/v0.1.2...v0.1.2)
