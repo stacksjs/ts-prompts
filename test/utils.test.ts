@@ -1,8 +1,9 @@
 import type { Key } from 'node:readline'
-import { afterEach, describe, expect, it, mock, spyOn } from 'bun:test'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test'
 import { Buffer } from 'node:buffer'
-import { block } from '../src/runtimes/utils/index'
 import { cursor } from '../src/utils'
+import { block } from '../src/utils/index'
+import { settings } from '../src/utils/settings'
 import { MockReadable, MockWritable } from './utils'
 
 describe('utils', () => {

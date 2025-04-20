@@ -2,7 +2,8 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock,
 import { EventEmitter, Readable, Writable } from 'node:stream'
 import colors from 'picocolors'
 import * as prompts from '../src/prompts'
-import { settings } from '../src/runtimes/utils/settings'
+import { isCancel } from '../src/utils/index'
+import { settings } from '../src/utils/settings'
 
 // TODO (43081j): move this into a util?
 class MockWritable extends Writable {
@@ -387,7 +388,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       const value = await result
 
-      expect(prompts.isCancel(value)).toBe(true)
+      expect(isCancel(value)).toBe(true)
       expect(output.buffer).toMatchSnapshot()
     })
 
@@ -404,7 +405,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       const value = await result
 
-      expect(prompts.isCancel(value)).toBe(true)
+      expect(isCancel(value)).toBe(true)
       expect(output.buffer).toMatchSnapshot()
     })
 
@@ -572,7 +573,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       const value = await result
 
-      expect(prompts.isCancel(value)).toBe(true)
+      expect(isCancel(value)).toBe(true)
       expect(output.buffer).toMatchSnapshot()
     })
 
@@ -657,7 +658,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       const value = await result
 
-      expect(prompts.isCancel(value)).toBe(true)
+      expect(isCancel(value)).toBe(true)
       expect(output.buffer).toMatchSnapshot()
     })
 
@@ -750,7 +751,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       const value = await result
 
-      expect(prompts.isCancel(value)).toBe(true)
+      expect(isCancel(value)).toBe(true)
       expect(output.buffer).toMatchSnapshot()
     })
 
@@ -972,7 +973,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       const value = await result
 
-      expect(prompts.isCancel(value)).toBe(true)
+      expect(isCancel(value)).toBe(true)
       expect(output.buffer).toMatchSnapshot()
     })
   })
@@ -1062,7 +1063,7 @@ describe.each(['true', 'false'])('prompts (isCI = %s)', (isCI) => {
 
       const value = await result
 
-      expect(prompts.isCancel(value)).toBe(true)
+      expect(isCancel(value)).toBe(true)
       expect(output.buffer).toMatchSnapshot()
     })
   })
