@@ -1,4 +1,17 @@
 
+## v0.1.0...main
+
+[compare changes](https://github.com/stacksjs/clapp/compare/v0.1.0...main)
+
+### 🏡 Chore
+
+- Zip the binaries ([969a5f6](https://github.com/stacksjs/clapp/commit/969a5f6))
+- Lint ([139f6a8](https://github.com/stacksjs/clapp/commit/139f6a8))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.0.2...main
 
 [compare changes](https://github.com/stacksjs/clapp/compare/v0.0.2...main)
