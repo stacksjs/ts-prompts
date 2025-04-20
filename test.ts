@@ -61,11 +61,13 @@ const bar = progress.bar({ title: 'Loading', total: 100 })
 for (let i = 0; i <= 100; i += 10) {
   bar.update(i)
   // add a delay between updates
+  // eslint-disable-next-line antfu/no-top-level-await
   await new Promise(resolve => setTimeout(resolve, 200))
 }
 bar.stop()
 
 // Spinner example with progressive dots
+// eslint-disable-next-line no-console
 console.log('\nSpinner Example:')
 // Use our enhanced spinner with built-in dots animation
 const spin = spinner('Processing')

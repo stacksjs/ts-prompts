@@ -1,5 +1,4 @@
-import { Readable } from 'node:stream'
-import { Writable } from 'node:stream'
+import { Readable, Writable } from 'node:stream'
 
 export class MockWritable extends Writable {
   public buffer: string[] = []
