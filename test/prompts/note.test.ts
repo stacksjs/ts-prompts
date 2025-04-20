@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, jest, test } from 'bun:test'
 import colors from 'picocolors'
 import * as prompts from '../../src'
 import { MockReadable, MockWritable } from '../utils'
@@ -23,7 +23,7 @@ describe.each(['true', 'false'])('note (isCI = %s)', (isCI) => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    jest.restoreAllMocks()
   })
 
   test('renders message with title', () => {

@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'bun:test'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, jest, test } from 'bun:test'
 import * as prompts from '../../src'
 import { MockReadable, MockWritable } from '../utils'
 
@@ -22,7 +22,7 @@ describe.each(['true', 'false'])('groupMultiselect (isCI = %s)', (isCI) => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    jest.restoreAllMocks()
   })
 
   test('renders message with options', async () => {
@@ -281,8 +281,8 @@ describe.each(['true', 'false'])('groupMultiselect (isCI = %s)', (isCI) => {
   })
 
   test('values can be non-primitive', async () => {
-    const value0 = Symbol()
-    const value1 = Symbol()
+    const value0 = Symbol('value0')
+    const value1 = Symbol('value1')
     const result = prompts.groupMultiselect({
       message: 'foo',
       input,
