@@ -27,7 +27,7 @@ export default class TextPrompt extends Prompt {
   }
 
   constructor(opts: TextOptions) {
-    super(opts)
+    super(opts as unknown as PromptOptions<Prompt>)
 
     this.on('finalize', () => {
       if (!this.value) {
