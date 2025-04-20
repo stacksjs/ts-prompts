@@ -1,6 +1,6 @@
 import type { CommonOptions } from './common'
 import process from 'node:process'
-import color from 'picocolors'
+import pc from 'picocolors'
 import {
   S_BAR,
   S_ERROR,
@@ -24,6 +24,12 @@ export interface Log {
   warn: (message: string, opts?: LogMessageOptions) => void
   warning: (message: string, opts?: LogMessageOptions) => void
   error: (message: string, opts?: LogMessageOptions) => void
+  custom: (
+    symbol: string,
+    message: string | string[],
+    color: string | ((text: string) => string),
+    opts?: LogMessageOptions,
+  ) => void
 }
 
 // TODO: update through clarity
@@ -31,8 +37,8 @@ export const log: Log = {
   message: (
     message: string | string[] = [],
     {
-      symbol = color.gray(S_BAR),
-      secondarySymbol = color.gray(S_BAR),
+      symbol = pc.gray(S_BAR),
+      secondarySymbol = pc.gray(S_BAR),
       output = process.stdout,
       spacing = 1,
     }: LogMessageOptions = {},
@@ -62,22 +68,39 @@ export const log: Log = {
     output.write(`${parts.join('\n')}\n`)
   },
   info: (message: string, opts?: LogMessageOptions) => {
-    log.message(message, { ...opts, symbol: color.blue(S_INFO) })
+    log.message(message, { ...opts, symbol: pc.blue(S_INFO) })
   },
   success: (message: string, opts?: LogMessageOptions) => {
-    log.message(message, { ...opts, symbol: color.green(S_SUCCESS) })
+    log.message(message, { ...opts, symbol: pc.green(S_SUCCESS) })
   },
   step: (message: string, opts?: LogMessageOptions) => {
-    log.message(message, { ...opts, symbol: color.green(S_STEP_SUBMIT) })
+    log.message(message, { ...opts, symbol: pc.green(S_STEP_SUBMIT) })
   },
   warn: (message: string, opts?: LogMessageOptions) => {
-    log.message(message, { ...opts, symbol: color.yellow(S_WARN) })
+    log.message(message, { ...opts, symbol: pc.yellow(S_WARN) })
   },
   /** alias for `log.warn()`. */
   warning: (message: string, opts?: LogMessageOptions) => {
     log.warn(message, opts)
   },
   error: (message: string, opts?: LogMessageOptions) => {
-    log.message(message, { ...opts, symbol: color.red(S_ERROR) })
+    log.message(message, { ...opts, symbol: pc.red(S_ERROR) })
+  },
+  custom: (
+    symbol: string,
+    message: string | string[],
+    color: string | ((text: string) => string),
+    opts?: LogMessageOptions,
+  ) => {
+    // Convert string color name to picocolors function
+    const colorFn = typeof color === 'string'
+      ? (text: string) => (pc as any)[color]?.(text) || text
+      : color
+
+    log.message(message, {
+      ...opts,
+      symbol: colorFn(symbol),
+      secondarySymbol: colorFn(symbol),
+    })
   },
 }

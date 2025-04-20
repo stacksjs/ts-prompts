@@ -1,4 +1,8 @@
-import { box, log, panel, progress, setAccessibility, spinner, style, table } from './src/style'
+import pc from 'picocolors'
+import { log } from './src/prompts/log'
+import { progress } from './src/prompts/progress-bar'
+import { spinner } from './src/prompts/spinner'
+import { box, panel, setAccessibility, style, table } from './src/style'
 
 // Force color support to be enabled regardless of environment
 setAccessibility({ colors: true })
@@ -54,12 +58,15 @@ log.info('This is an information message')
 log.success('This is a success message')
 log.warn('This is a warning message')
 log.error('This is an error message')
-log.custom('★', 'This is a custom log message', 'cyan')
+log.custom('★', 'This is a custom log message', pc.cyan)
 
 // Progress bar example (commented out as it requires time to demonstrate)
-const bar = progress.bar({ title: 'Loading', total: 100 })
+const bar = progress({
+  max: 100,
+})
+bar.start('Loading')
 for (let i = 0; i <= 100; i += 10) {
-  bar.update(i)
+  bar.advance(10)
   // add a delay between updates
   // eslint-disable-next-line antfu/no-top-level-await
   await new Promise(resolve => setTimeout(resolve, 200))
@@ -69,12 +76,10 @@ bar.stop()
 // Spinner example with progressive dots
 // eslint-disable-next-line no-console
 console.log('\nSpinner Example:')
-// Use our enhanced spinner with built-in dots animation
-const spin = spinner('Processing')
-  .dots(true, 3) // Enable dot animation with max 3 dots
-  .start()
+const spin = spinner()
+spin.start('Processing')
 
 // Complete the spinner after 6 seconds
 setTimeout(() => {
-  spin.succeed('Processing complete')
+  spin.stop('Processing complete')
 }, 6000)

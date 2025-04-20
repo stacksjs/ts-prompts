@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import process from 'node:process'
 
-interface Styler {
+export interface Styler {
   // Basic colors
   red: StylerFunction
   green: StylerFunction
@@ -45,13 +45,13 @@ interface Styler {
   [key: string]: StylerFunction | boolean
 }
 
-interface StylerFunction {
+export interface StylerFunction {
   (text: string): string
   [key: string]: StylerFunction
 }
 
 // ANSI color codes
-const codes: Record<string, [string, string]> = {
+export const codes: Record<string, [string, string]> = {
   // Text colors
   red: ['\x1B[31m', '\x1B[39m'],
   green: ['\x1B[32m', '\x1B[39m'],
@@ -254,117 +254,6 @@ export function panel(options: { title?: string, content: string, borderColor?: 
   // Bottom border
 
   console.log(`╚${'═'.repeat(innerWidth)}╝`)
-}
-
-// Progress indicator placeholders
-export const progress = {
-  bar: (options: { title: string, total: number }) => {
-    let current = 0
-    return {
-      update: (value: number): void => {
-        current = value
-        const percentage = Math.floor((current / options.total) * 100)
-        const barWidth = 30
-        const filledWidth = Math.floor((barWidth * current) / options.total)
-        const emptyWidth = barWidth - filledWidth
-
-        process.stdout.write(`\r${options.title}: [${'='.repeat(filledWidth)}${' '.repeat(emptyWidth)}] ${percentage}%`)
-      },
-      stop: (): void => {
-        process.stdout.write('\n')
-      },
-    }
-  },
-}
-
-interface Spinner {
-  start: (startText?: string) => Spinner
-  stop: () => Spinner
-  succeed: (successText?: string) => Spinner
-  fail: (failText?: string) => Spinner
-  text: string
-  dots: (enable: boolean, maxDots?: number) => Spinner
-}
-
-export function spinner(text?: string): Spinner {
-  const frames: string[] = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
-  let i = 0
-  let interval: NodeJS.Timeout | null = null
-  let currentText = text || ''
-  let useDots = false
-  let dotCount = 0
-  let maxDots = 3
-  let dotInterval: NodeJS.Timeout | null = null
-
-  const spinnerObj: Spinner = {
-    start: (startText?: string): Spinner => {
-      if (startText)
-        currentText = startText
-
-      interval = setInterval(() => {
-        const frame = frames[i = ++i % frames.length]
-        const displayText = useDots ? `${currentText}${'.'.repeat(dotCount)}` : currentText
-        // Clear the line first to avoid highlighting artifacts
-        process.stdout.write(`\r${' '.repeat(40)}\r`)
-        process.stdout.write(`${frame} ${displayText}`)
-      }, 80)
-
-      return spinnerObj
-    },
-    stop: (): Spinner => {
-      if (interval) {
-        clearInterval(interval)
-        if (dotInterval)
-          clearInterval(dotInterval)
-        process.stdout.write('\r \r')
-      }
-      return spinnerObj
-    },
-    succeed: (successText?: string): Spinner => {
-      if (interval) {
-        clearInterval(interval)
-        if (dotInterval)
-          clearInterval(dotInterval)
-        process.stdout.write(`\r✓ ${successText || currentText}\n`)
-      }
-      return spinnerObj
-    },
-    fail: (failText?: string): Spinner => {
-      if (interval) {
-        clearInterval(interval)
-        if (dotInterval)
-          clearInterval(dotInterval)
-        process.stdout.write(`\r✗ ${failText || currentText}\n`)
-      }
-      return spinnerObj
-    },
-    set text(newText: string) {
-      currentText = newText
-    },
-    get text(): string {
-      return currentText
-    },
-    // New method to enable/disable dot animation
-    dots: (enable: boolean, dots: number = 3): Spinner => {
-      useDots = enable
-      maxDots = dots
-
-      if (enable && !dotInterval) {
-        dotInterval = setInterval(() => {
-          dotCount = (dotCount + 1) % (maxDots + 1)
-        }, 500)
-      }
-      else if (!enable && dotInterval) {
-        clearInterval(dotInterval)
-        dotInterval = null
-        dotCount = 0
-      }
-
-      return spinnerObj
-    },
-  }
-
-  return spinnerObj
 }
 
 export function table(data: string[][], options?: { border?: boolean, header?: boolean, align?: ('left' | 'right' | 'center')[] }): void {
