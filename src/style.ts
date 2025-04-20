@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-import process from 'node:process'
-
 export interface Styler {
   // Basic colors
   red: StylerFunction
