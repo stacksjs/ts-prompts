@@ -5,7 +5,6 @@ import {
   confirm,
   group,
   intro,
-  isCancel,
   multiselect,
   note,
   outro,
@@ -14,6 +13,7 @@ import {
   tasks,
   text,
 } from '../src/prompts'
+import { isCancel } from '../src/utils/index'
 
 interface OnboardingAnswers {
   projectName: string
