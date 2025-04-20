@@ -1,4 +1,20 @@
 
+## v0.1.1...main
+
+[compare changes](https://github.com/stacksjs/clapp/compare/v0.1.1...main)
+
+### 🏡 Chore
+
+- Type improvements ([346348a](https://github.com/stacksjs/clapp/commit/346348a))
+- Add credits ([2198294](https://github.com/stacksjs/clapp/commit/2198294))
+- Fix dummy import ([418fbbc](https://github.com/stacksjs/clapp/commit/418fbbc))
+- Minor adjustments ([d9f2a33](https://github.com/stacksjs/clapp/commit/d9f2a33))
+- Remove unused import ([d26a983](https://github.com/stacksjs/clapp/commit/d26a983))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.1.0...main
 
 [compare changes](https://github.com/stacksjs/clapp/compare/v0.1.0...main)
