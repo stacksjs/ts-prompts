@@ -1,4 +1,16 @@
 
+## v0.1.4...main
+
+[compare changes](https://github.com/stacksjs/clapp/compare/v0.1.4...main)
+
+### 🏡 Chore
+
+- Update `action-releaser` ([17f3191](https://github.com/stacksjs/clapp/commit/17f3191))
+
+### ❤️ Contributors
+
+- Chris ([@chrisbbreuer](https://github.com/chrisbbreuer))
+
 ## v0.1.3...main
 
 [compare changes](https://github.com/stacksjs/clapp/compare/v0.1.3...main)
