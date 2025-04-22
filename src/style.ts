@@ -20,6 +20,9 @@ export interface Styler {
 
   // Text decorations
   bold: StylerFunction
+  /**
+   * Italicize text within your CLI.
+   */
   italic: StylerFunction
   underline: StylerFunction
   dim: StylerFunction

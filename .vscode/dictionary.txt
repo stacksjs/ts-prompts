@@ -18,6 +18,7 @@ deps
 destructurable
 dtsx
 entrypoints
+gitit
 heroicons
 iconify
 lockb
