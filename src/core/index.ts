@@ -1,3 +1,4 @@
+export * from '../prompts'
 export { block, getColumns, isCancel } from '../utils/index'
 export type { ClappSettings } from '../utils/settings'
 export { settings, updateSettings } from '../utils/settings'
@@ -9,4 +10,6 @@ export { default as Prompt } from './prompts/prompt'
 export { default as SelectPrompt } from './prompts/select'
 export { default as SelectKeyPrompt } from './prompts/select-key'
 export { default as TextPrompt } from './prompts/text'
+
 export type { ClappState as State } from './types'
+export * from './types'

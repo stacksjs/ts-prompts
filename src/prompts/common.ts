@@ -1,9 +1,11 @@
 import type { Readable, Writable } from 'node:stream'
 import type { PromptState as State } from '../types'
+import process from 'node:process'
 import color from 'picocolors'
 import { isUnicodeSupported } from '../utils'
 
 export const unicode: boolean = isUnicodeSupported()
+export const isCI = (): boolean => process.env.CI === 'true'
 export const unicodeOr: (c: string, fallback: string) => string = (c: string, fallback: string) => (unicode ? c : fallback)
 export const S_STEP_ACTIVE: string = unicodeOr('◆', '*')
 export const S_STEP_CANCEL: string = unicodeOr('■', 'x')

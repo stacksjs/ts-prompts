@@ -4,6 +4,7 @@ import color from 'picocolors'
 import { cursor, erase } from '../utils'
 import { block, settings } from '../utils/index'
 import {
+  isCI as isCIFn,
   S_BAR,
   S_STEP_CANCEL,
   S_STEP_ERROR,
@@ -16,6 +17,8 @@ export interface SpinnerOptions extends CommonOptions {
   onCancel?: () => void
   cancelMessage?: string
   errorMessage?: string
+  frames?: string[]
+  delay?: number
 }
 
 export interface SpinnerResult {
@@ -31,10 +34,10 @@ export function spinner({
   output = process.stdout,
   cancelMessage,
   errorMessage,
+  frames = unicode ? ['◒', '◐', '◓', '◑'] : ['•', 'o', 'O', '0'],
+  delay = unicode ? 80 : 120,
 }: SpinnerOptions = {}): SpinnerResult {
-  const frames = unicode ? ['◒', '◐', '◓', '◑'] : ['•', 'o', 'O', '0']
-  const delay = unicode ? 80 : 120
-  const isCI = process.env.CI === 'true'
+  const isCI = isCIFn()
 
   let unblock: () => void
   let loop: NodeJS.Timeout

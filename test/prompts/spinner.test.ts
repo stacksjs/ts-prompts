@@ -150,6 +150,42 @@ describe.each(['true', 'false'])('spinner (isCI = %s)', (isCI) => {
       setSystemTime(new Date(Date.now() + 80))
 
       expect(output.buffer).toMatchSnapshot()
+
+      result.stop()
+
+      expect(output.buffer).toMatchSnapshot()
+    })
+  })
+
+  describe('indicator customization', () => {
+    test('custom frames', () => {
+      const result = prompts.spinner({ output, frames: ['🐴', '🦋', '🐙', '🐶'] })
+
+      result.start()
+
+      // there are 4 frames
+      for (let i = 0; i < 4; i++) {
+        setSystemTime(new Date(Date.now() + 80))
+      }
+
+      result.stop()
+
+      expect(output.buffer).toMatchSnapshot()
+    })
+
+    test('custom delay', () => {
+      const result = prompts.spinner({ output, delay: 200 })
+
+      result.start()
+
+      // there are 4 frames
+      for (let i = 0; i < 4; i++) {
+        setSystemTime(new Date(Date.now() + 200))
+      }
+
+      result.stop()
+
+      expect(output.buffer).toMatchSnapshot()
     })
   })
 

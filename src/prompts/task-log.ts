@@ -4,7 +4,7 @@ import process from 'node:process'
 import * as color from 'picocolors'
 import { erase } from '../utils'
 import { getColumns } from '../utils/index'
-import { S_BAR, S_STEP_SUBMIT } from './common'
+import { isCI as isCIFn, S_BAR, S_STEP_SUBMIT } from './common'
 import { log } from './log'
 
 export interface TaskLogOptions extends CommonOptions {
@@ -28,11 +28,11 @@ export interface TaskLogCompletionOptions {
 export function taskLog(opts: TaskLogOptions) {
   const output: Writable = opts.output ?? process.stdout
   const columns = getColumns(output)
-  const secondarySymbol = color.dim(S_BAR)
+  const secondarySymbol = color.gray(S_BAR)
   const spacing = opts.spacing ?? 1
   const barSize = 3
   const retainLog = opts.retainLog === true
-  const isCI = process.env.CI === 'true'
+  const isCI = isCIFn()
 
   output.write(`${secondarySymbol}\n`)
   output.write(`${color.green(S_STEP_SUBMIT)}  ${opts.title}\n`)
