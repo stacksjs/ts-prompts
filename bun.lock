@@ -6,7 +6,7 @@
       "devDependencies": {
         "@stacksjs/docs": "^0.70.23",
         "@stacksjs/eslint-config": "^4.10.2-beta.3",
-        "@stacksjs/gitit": "^0.1.5",
+        "@stacksjs/gitit": "^0.2.1",
         "@types/bun": "^1.2.9",
         "bumpp": "^10.1.0",
         "bun-plugin-dtsx": "^0.21.9",
@@ -491,7 +491,7 @@
 
     "@stacksjs/eslint-plugin": ["@stacksjs/eslint-plugin@0.2.4", "", { "dependencies": { "@stacksjs/eslint-config": "^4.10.2-beta.1", "@typescript-eslint/utils": "^8.27.0", "@unocss/config": "66.0.0", "@unocss/core": "66.0.0", "magic-string": "^0.30.17", "synckit": "^0.10.0", "unocss": "^66.0.0" } }, "sha512-cPCi9eTeXIXI6RTNvK1QmUFNpT3aTnhLsBXpuD8hs8d+2CSn7mNZBZDn61+Se6nzy3Ot/grKc4uua3uD/+m1cQ=="],
 
-    "@stacksjs/gitit": ["@stacksjs/gitit@0.1.5", "", { "dependencies": { "nanotar": "^0.2.0" }, "bin": { "gitit": "dist/bin/cli.js" } }, "sha512-cdEzEFH0WsnR/AR8wz3iPoVtM4BATBJt38P6clm2Lu59nv6dZR1qZ4r1xizWfo9nrwKoDg48SQKBl2V/+jlQ6g=="],
+    "@stacksjs/gitit": ["@stacksjs/gitit@0.2.1", "", { "dependencies": { "nanotar": "^0.2.0" }, "bin": { "gitit": "dist/bin/cli.js" } }, "sha512-LUeT9MXjVf/m1aoOCT0Y5N6LatzDaaz+YV7d3vspBWZ3pj9hqaq/T+3STKIKPKPIqs7zG60uL1Z6E0HPaJ3q/Q=="],
 
     "@stylistic/eslint-plugin": ["@stylistic/eslint-plugin@4.2.0", "", { "dependencies": { "@typescript-eslint/utils": "^8.23.0", "eslint-visitor-keys": "^4.2.0", "espree": "^10.3.0", "estraverse": "^5.3.0", "picomatch": "^4.0.2" }, "peerDependencies": { "eslint": ">=9.0.0" } }, "sha512-8hXezgz7jexGHdo5WN6JBEIPHCSFyyU4vgbxevu4YLVS5vl+sxqAAGyXSzfNDyR6xMNSH5H1x67nsXcYMOHtZA=="],
 
