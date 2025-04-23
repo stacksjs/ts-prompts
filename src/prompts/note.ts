@@ -4,6 +4,7 @@ import process from 'node:process'
 import { stripVTControlCharacters as strip } from 'node:util'
 import color from 'picocolors'
 import {
+  processMarkdown,
   S_BAR,
   S_BAR_H,
   S_CONNECT_LEFT,
@@ -20,8 +21,11 @@ const defaultNoteFormatter = (line: string): string => color.dim(line)
 
 export const note: (message: string, title: string, opts?: NoteOptions) => void = (message = '', title = '', opts?: NoteOptions) => {
   const format = opts?.format ?? defaultNoteFormatter
-  const lines = ['', ...message.split('\n').map(format), '']
-  const titleLen = strip(title).length
+  const processedMessage = processMarkdown(message)
+  const processedTitle = processMarkdown(title)
+
+  const lines = ['', ...processedMessage.split('\n').map(format), '']
+  const titleLen = strip(processedTitle).length
   const output: Writable = opts?.output ?? process.stdout
   const len
     = Math.max(
@@ -37,7 +41,7 @@ export const note: (message: string, title: string, opts?: NoteOptions) => void 
     )
     .join('\n')
   output.write(
-    `${color.gray(S_BAR)}\n${color.green(S_STEP_SUBMIT)}  ${color.reset(title)} ${color.gray(
+    `${color.gray(S_BAR)}\n${color.green(S_STEP_SUBMIT)}  ${color.reset(processedTitle)} ${color.gray(
       S_BAR_H.repeat(Math.max(len - titleLen - 1, 1)) + S_CORNER_TOP_RIGHT,
     )}\n${msg}\n${color.gray(S_CONNECT_LEFT + S_BAR_H.repeat(len + 2) + S_CORNER_BOTTOM_RIGHT)}\n`,
   )

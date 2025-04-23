@@ -2,6 +2,7 @@ import type { CommonOptions } from './common'
 import process from 'node:process'
 import pc from 'picocolors'
 import {
+  processMarkdown,
   S_BAR,
   S_ERROR,
   S_INFO,
@@ -32,6 +33,14 @@ export interface Log {
   ) => void
 }
 
+// Helper function to process markdown in messages
+function processMessage(message: string | string[]): string | string[] {
+  if (Array.isArray(message)) {
+    return message.map(m => processMarkdown(m))
+  }
+  return processMarkdown(message)
+}
+
 // TODO: update through clarity
 export const log: Log = {
   message: (
@@ -47,7 +56,9 @@ export const log: Log = {
     for (let i = 0; i < spacing; i++) {
       parts.push(`${secondarySymbol}`)
     }
-    const messageParts = Array.isArray(message) ? message : message.split('\n')
+    // Process markdown in message
+    const processedMessage = processMessage(message)
+    const messageParts = Array.isArray(processedMessage) ? processedMessage : processedMessage.split('\n')
     if (messageParts.length > 0) {
       const [firstLine, ...lines] = messageParts
       if (firstLine.length > 0) {

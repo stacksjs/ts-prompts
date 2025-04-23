@@ -2,54 +2,34 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
-import { cli, style } from '../src'
+import { cli } from '../src'
 import {
-  confirm as originalConfirm,
-  log as originalLog,
+  confirm,
+  log,
   // note,
   // select,
-  text as originalText,
+  text,
 } from '../src/prompts'
 
 // Define the main CLI
 const stacks = cli('stacks')
 
-// Helper function to process markdown in any string
-function processMarkdown(text: string): string {
-  return text.replace(/_([^_]+)_/g, (_, content) => style.italic(content))
-}
-
-// Create wrapped log functions that handle markdown formatting
-const log = {
-  ...originalLog,
+// Create custom log functions to maintain compatibility
+// with the existing code (our prompts now handle markdown directly)
+const customLog = {
+  ...log,
   info: (message: string) => {
-    originalLog.info(processMarkdown(message))
+    log.info(message)
   },
   success: (message: string) => {
-    originalLog.success(processMarkdown(message))
+    log.success(message)
   },
   error: (message: string) => {
-    originalLog.error(processMarkdown(message))
+    log.error(message)
   },
   warn: (message: string) => {
-    originalLog.warn(processMarkdown(message))
+    log.warn(message)
   },
-}
-
-// Create wrapped confirm function that handles markdown in the message
-async function confirm(options: { message: string, initialValue?: boolean }) {
-  return await originalConfirm({
-    ...options,
-    message: processMarkdown(options.message),
-  })
-}
-
-// Create wrapped text function that handles markdown in the message
-async function text(options: { message: string, placeholder?: string }) {
-  return await originalText({
-    ...options,
-    message: processMarkdown(options.message),
-  })
 }
 
 stacks.command('create', 'Create a new Stacks project')
@@ -251,7 +231,7 @@ async function createProject(config: {
   const projectDir = path.join(process.cwd(), config.name)
 
   // Create project directory
-  log.info(`Creating project directory: _${projectDir}_`)
+  customLog.info(`Creating project directory: _${projectDir}_`)
 
   try {
     // Import downloadTemplate dynamically to avoid installation issues
@@ -275,10 +255,10 @@ async function createProject(config: {
     }
 
     fs.writeFileSync(configFile, JSON.stringify(stacksConfig, null, 2))
-    log.info('Created configuration file for the Stacks template')
+    customLog.info('Created configuration file for the Stacks template')
 
     // Download the template using the gitit library
-    log.info(`Downloading template: _github:stacksjs/stacks_`)
+    customLog.info(`Downloading template: _github:stacksjs/stacks_`)
 
     // Store the downloadTemplate result to use it later if needed
     await downloadTemplate('github:stacksjs/stacks', {
@@ -288,7 +268,7 @@ async function createProject(config: {
       hooks: {
         // Add hook to debug output
         afterExtract: (result) => {
-          log.info(`Template extracted to _${result.dir}_`)
+          customLog.info(`Template extracted to _${result.dir}_`)
           return result
         },
       },
@@ -299,7 +279,7 @@ async function createProject(config: {
       fs.unlinkSync(configFile)
     }
 
-    log.success(`Project ${config.name} created successfully using Stacks template!
+    customLog.success(`Project ${config.name} created successfully using Stacks template!
 
 _To get started:_
   cd ${config.name}
@@ -307,8 +287,8 @@ _To get started:_
   bun run dev`)
   }
   catch (error: any) {
-    log.error(`Failed to create project: ${error.message}`)
-    log.info('To install gitit manually: _bun install -g @stacksjs/gitit_')
+    customLog.error(`Failed to create project: ${error.message}`)
+    customLog.info('To install gitit manually: _bun install -g @stacksjs/gitit_')
   }
 }
 

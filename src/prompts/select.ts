@@ -2,6 +2,7 @@ import type { CommonOptions } from './common'
 import color from 'picocolors'
 import { SelectPrompt } from '../core'
 import {
+  processMarkdown,
   S_BAR,
   S_BAR_END,
   S_RADIO_ACTIVE,
@@ -58,6 +59,9 @@ export interface SelectOptions<Value> extends CommonOptions {
 }
 
 export function select<Value>(opts: SelectOptions<Value>) {
+  // Process markdown in the message
+  const message = processMarkdown(opts.message)
+
   const opt = (option: Option<Value>, state: 'inactive' | 'active' | 'selected' | 'cancelled') => {
     const label = option.label ?? String(option.value)
     switch (state) {
@@ -79,7 +83,7 @@ export function select<Value>(opts: SelectOptions<Value>) {
     output: opts.output,
     initialValue: opts.initialValue,
     render() {
-      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${message}\n`
 
       switch (this.state) {
         case 'submit':

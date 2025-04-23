@@ -2,6 +2,7 @@ import type { CommonOptions } from './common.js'
 import color from 'picocolors'
 import { ConfirmPrompt } from '../core'
 import {
+  processMarkdown,
   S_BAR,
   S_BAR_END,
   S_RADIO_ACTIVE,
@@ -18,6 +19,8 @@ export interface ConfirmOptions extends CommonOptions {
 export function confirm(opts: ConfirmOptions) {
   const active = opts.active ?? 'Yes'
   const inactive = opts.inactive ?? 'No'
+  const message = processMarkdown(opts.message)
+
   return new ConfirmPrompt({
     active,
     inactive,
@@ -25,7 +28,7 @@ export function confirm(opts: ConfirmOptions) {
     output: opts.output,
     initialValue: opts.initialValue ?? true,
     render() {
-      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${message}\n`
       const value = this.value ? active : inactive
 
       switch (this.state) {

@@ -1,7 +1,7 @@
 import type { CommonOptions } from './common'
 import color from 'picocolors'
 import { TextPrompt } from '../core'
-import { S_BAR, S_BAR_END, symbol } from './common'
+import { processMarkdown, S_BAR, S_BAR_END, symbol } from './common'
 
 export interface TextOptions extends CommonOptions {
   message: string
@@ -12,6 +12,8 @@ export interface TextOptions extends CommonOptions {
 }
 
 export function text(opts: TextOptions) {
+  const message = processMarkdown(opts.message)
+
   return new TextPrompt({
     validate: opts.validate,
     placeholder: opts.placeholder,
@@ -20,7 +22,7 @@ export function text(opts: TextOptions) {
     output: opts.output,
     input: opts.input,
     render() {
-      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${opts.message}\n`
+      const title = `${color.gray(S_BAR)}\n${symbol(this.state)}  ${message}\n`
       const placeholder = opts.placeholder
         ? color.inverse(opts.placeholder[0]) + color.dim(opts.placeholder.slice(1))
         : color.inverse(color.hidden('_'))
